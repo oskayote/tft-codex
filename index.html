@@ -40,16 +40,16 @@
 <body>
   <div id="boot"><span>LOADING TFT CODEX</span></div>
   <div id="root"></div>
-
+ 
   <!-- React + Babel from CDN. Production builds for fast first paint. -->
   <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
-
+ 
   <script type="text/babel" data-presets="react">
-
+ 
 const { useState, useEffect, useMemo } = React;
-
+ 
 // ============================================================
 // localStorage shim that matches the API the artifact expected
 // (window.storage.get / set / delete return promises).
@@ -79,7 +79,7 @@ const storage = {
     return { keys, prefix };
   },
 };
-
+ 
 // ============================================================
 // Inline Lucide icons — no external dependency.
 // Paths sourced from the Lucide icon set (ISC license).
@@ -107,7 +107,7 @@ const ICON_PATHS = {
   "crown":           <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/>,
   "zap":             <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>,
 };
-
+ 
 function Icon({ name, size = 16, color = "currentColor", strokeWidth = 2, fill = "none", style }) {
   const path = ICON_PATHS[name];
   if (!path) return null;
@@ -127,13 +127,13 @@ function Icon({ name, size = 16, color = "currentColor", strokeWidth = 2, fill =
     </svg>
   );
 }
-
-
+ 
+ 
 // =============================================================
 // TFT CODEX — Set 17 (Space Gods) comp tracker
 // Persistent, editable, in-depth guide builder
 // =============================================================
-
+ 
 const COST_COLORS = {
   1: { ring: "#9ca3af", bg: "rgba(156,163,175,0.12)", text: "#d1d5db" },
   2: { ring: "#10b981", bg: "rgba(16,185,129,0.14)", text: "#6ee7b7" },
@@ -141,7 +141,7 @@ const COST_COLORS = {
   4: { ring: "#a855f7", bg: "rgba(168,85,247,0.16)", text: "#d8b4fe" },
   5: { ring: "#fbbf24", bg: "rgba(251,191,36,0.18)", text: "#fcd34d" },
 };
-
+ 
 const TIER_STYLES = {
   S: { bg: "linear-gradient(135deg,#fbbf24,#f59e0b)", text: "#1a1300", glow: "rgba(251,191,36,0.45)" },
   A: { bg: "linear-gradient(135deg,#c084fc,#a855f7)", text: "#1a0a2e", glow: "rgba(168,85,247,0.4)" },
@@ -149,9 +149,11 @@ const TIER_STYLES = {
   C: { bg: "linear-gradient(135deg,#34d399,#10b981)", text: "#04231a", glow: "rgba(16,185,129,0.4)" },
   D: { bg: "linear-gradient(135deg,#fb7185,#e11d48)", text: "#2a0712", glow: "rgba(225,29,72,0.4)" },
 };
-
-// ---- Seed data: Set 17 (Space Gods) examples ----
+ 
+// ---- Seed data: Set 17 (Space Gods) — 10 meta comps for Patch 17.2 ----
+ 
 const SEED_COMPS = [
+  // 1. =========================================================
   {
     id: "bruiser-yi",
     name: "Bruiser Master Yi",
@@ -164,14 +166,14 @@ const SEED_COMPS = [
       { name: "Cho'Gath", cost: 1, stars: 3, traits: "Brawler · Primordian", items: "Warmog's Armor", role: "tank" },
       { name: "Aatrox", cost: 1, stars: 3, traits: "Brawler · Doomer", items: "—", role: "tank" },
       { name: "Gragas", cost: 2, stars: 2, traits: "Brawler · Party Animal", items: "Sunfire Cape (optional)", role: "tank" },
-      { name: "Belveth", cost: 2, stars: 2, traits: "Eradicator · Voyager", items: "—", role: "trait bot" },
+      { name: "Bel'Veth", cost: 2, stars: 2, traits: "Eradicator · Voyager", items: "—", role: "trait bot" },
       { name: "Jax", cost: 2, stars: 2, traits: "Brawler · Galaxy Hunter", items: "—", role: "trait bot" },
       { name: "Illaoi", cost: 4, stars: 2, traits: "Brawler · Primordian", items: "Gargoyle Stoneplate, Dragon's Claw", role: "tank" },
       { name: "Ornn", cost: 4, stars: 2, traits: "Bulwark · Forge", items: "—", role: "artifact forger" },
     ],
     itemPriority: {
       carry:
-        "Master Yi BIS: Bloodthirster (sustain + omnivamp) → Titan's Resolve (stacking AD/armor) → Quicksilver (CC immunity early). Sub: Sterak's Gage, Edge of Night, Steraks.",
+        "Master Yi BIS: Bloodthirster (sustain + omnivamp) → Titan's Resolve (stacking AD/armor) → Quicksilver (CC immunity early). Sub: Sterak's Gage, Edge of Night.",
       tank:
         "Illaoi tank items: Gargoyle Stoneplate (scaling armor/MR) + Dragon's Claw (anti-AP) + Warmog's (HP). Cho'Gath: single Warmog's is enough at 3-star.",
       utility:
@@ -187,24 +189,126 @@ const SEED_COMPS = [
       { stage: "6-1+", action: "Push 9 only if Yi is 3-starred and you're top 2. Otherwise focus on Illaoi 2 and Ornn artifact.", econ: "—" },
     ],
     positioning: {
-      // 4 rows × 7 cols. row 0 = frontline (top), row 3 = backline (bottom)
-      // grid stores champion name or null
       grid: [
         ["Cho'Gath", "Gragas", "Aatrox", "Illaoi", "Master Yi", "Jax", "Ornn"],
-        [null, null, null, "Belveth", null, null, null],
+        [null, null, null, "Bel'Veth", null, null, null],
         [null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null],
       ],
       notes:
-        "Yi mid-front so he hits the most targets. Spread tanks evenly to soak AOE. Belveth one row back to bait assassins away from Yi. If facing assassins, swap Yi to corner behind Illaoi. Vs ranged comps, hard-corner Yi opposite their carry to delay engage.",
+        "Yi mid-front so he hits the most targets. Spread tanks evenly to soak AOE. Bel'Veth one row back to bait assassins away from Yi. If facing assassins, swap Yi to corner behind Illaoi. Vs ranged comps, hard-corner Yi opposite their carry to delay engage.",
     },
     strategy:
       "This is the most consistent 'tanked game' comp in Set 17. Cho'Gath 3 is your unkillable anchor — he hits ~5000 effective HP with one Warmog's. Yi's E gives true damage AND attack speed; with Titan's stacking he becomes uncatchable by rounds 5-6. Pivot only if you can't find Yi by 4-5; in that case stay Brawler reroll and push 8 with Illaoi as carry (Hand of Justice + BT instead).",
     defensiveVariations:
-      "Defensive line: drop Belveth/Jax for Tahm Kench (Bulwark) + Rammus (Bastion) — caps lower DPS but board is nearly impossible to kill. Vs heavy AP add Dragon's Claw on Cho'Gath instead of Illaoi. Vs reroll AD, give Illaoi a Sunfire to push damage through her armor stacking. Vs Vex Fast 9, position Yi corner-opposite to bait her ult away from your tanks.",
+      "Defensive line: drop Bel'Veth/Jax for Tahm Kench (Bulwark) + Rammus (Bastion) — caps lower DPS but board is nearly impossible to kill. Vs heavy AP add Dragon's Claw on Cho'Gath instead of Illaoi. Vs reroll AD, give Illaoi a Sunfire to push damage through her armor stacking. Vs Vex Fast 9, position Yi corner-opposite to bait her ult away from your tanks.",
     counters:
       "Loses to: high-burst 2-star legendaries that bypass armor (Vex magic damage, Aurelion ramp). Anti-heal (Morellonomicon) on enemy carry shuts down BT sustain. Mortal Reminder negates Cho'Gath HP. If you see 2+ players forcing Brawlers, pivot early — Yi gets contested fast.",
   },
+ 
+  // 2. =========================================================
+  {
+    id: "primordian-reroll",
+    name: "Primordian Reroll",
+    tier: "S",
+    playstyle: "Reroll · Defensive frontline",
+    summary:
+      "Cheap, beginner-friendly, and one of the tankiest boards in the game. Cho'Gath 3 + Illaoi 2 is a wall. Great if you're learning positioning and economy.",
+    champions: [
+      { name: "Cho'Gath", cost: 1, stars: 3, traits: "Brawler · Primordian", items: "Warmog's Armor, Gargoyle Stoneplate, Dragon's Claw", role: "carry tank" },
+      { name: "Rek'Sai", cost: 1, stars: 3, traits: "Primordian · Voyager", items: "Hand of Justice (optional)", role: "damage" },
+      { name: "Nasus", cost: 1, stars: 3, traits: "Primordian · Bastion", items: "—", role: "tank" },
+      { name: "Briar", cost: 1, stars: 3, traits: "Primordian · Brawler", items: "Bloodthirster", role: "secondary carry" },
+      { name: "Bel'Veth", cost: 2, stars: 2, traits: "Primordian · Voyager · Eradicator", items: "—", role: "trait + damage" },
+      { name: "Illaoi", cost: 4, stars: 2, traits: "Brawler · Primordian", items: "—", role: "tank/damage" },
+      { name: "Ornn", cost: 4, stars: 2, traits: "Bulwark · Forge", items: "—", role: "forge artifact" },
+    ],
+    itemPriority: {
+      carry:
+        "ALL items go on Cho'Gath. Warmog's first (HP), then Gargoyle (scaling armor), then Dragon's Claw (vs AP) OR Bramble (vs AD). He becomes the carry by surviving long enough to ult into multiple targets.",
+      tank:
+        "Cho'Gath IS the tank. Rek'Sai gets Hand of Justice if you have leftover sword + tear. Briar can take Bloodthirster as a secondary damage threat.",
+      utility:
+        "Don't slot Sunfire on Cho — it caps too fast for your scaling. Pray for Anima Visage or Rocket-Propelled Fist from Ornn forge.",
+    },
+    leveling: [
+      { stage: "2-1", action: "Win streak with strongest board. Hold all Primordian 1-costs.", econ: "Streak gold > interest early." },
+      { stage: "2-5", action: "Level to 5 if streaking, otherwise stay 4.", econ: "—" },
+      { stage: "3-2", action: "Level to 6. Start slow-rolling at 50g for 3-stars.", econ: "Stay at 50g, roll 10g at a time." },
+      { stage: "3-5 to 4-1", action: "Hard-roll for Cho 3, Reksai 3, Nasus 3. Hit at least 2 by 4-2.", econ: "Drop below 50g if needed." },
+      { stage: "4-2", action: "Level to 7 once 3-stars are mostly secured. Add Illaoi 2.", econ: "Rebuild econ." },
+      { stage: "5-1", action: "Level to 8. Add Ornn for forge.", econ: "—" },
+    ],
+    positioning: {
+      grid: [
+        ["Nasus", null, "Illaoi", "Cho'Gath", "Ornn", null, null],
+        [null, "Briar", null, "Bel'Veth", null, "Rek'Sai", null],
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+      ],
+      notes:
+        "Cho'Gath dead-center front so his ult catches multiple targets. Tanks flanking him to soak hits. Briar/Reksai one row back as secondary damage. Avoid corners — Cho needs to be central to maximize ult value.",
+    },
+    strategy:
+      "The simplest tanked-game comp. You will survive every fight in stage 3. Goal: hit 3 three-stars by 4-1, then transition to level 7 with Illaoi. Don't get greedy pushing 8 — your power is the 3-star front. Late-game cap = level 8 with all 3-stars + Illaoi 2 + Ornn 2 + flex 5-cost (any).",
+    defensiveVariations:
+      "If lobby is AP-heavy: swap Dragon's Claw onto Cho instead of Bramble. Add Rammus over Briar for Bastion stacking armor. Vs Yi specifically, drop Bel'Veth for Tahm Kench (Bulwark) and run Cho mid-back-row as anti-engage. Counter to backline assassins: place Nasus in the assassin-drop tile (back corner same side as enemy) to intercept.",
+    counters:
+      "Vulnerable to: high sustained DPS (Vex 2, Yi 3). True damage punches through your armor stacking — Eradicator-heavy enemy boards counter you. Anti-heal isn't a huge deal here since you don't sustain with omnivamp. If you don't hit 3-stars by 4-2 you will lose; this comp has a hard timing window.",
+  },
+ 
+  // 3. =========================================================
+  {
+    id: "dark-stars-jhin",
+    name: "Dark Stars Jhin",
+    tier: "S",
+    playstyle: "Fast 8 · Backline carry",
+    summary:
+      "Jhin is the single best carry in Set 17. Three damage amps stack on him: Dark Star execute, Eradicator armor shred, and Sniper distance amp. One-shots most units from the back corner.",
+    champions: [
+      { name: "Jhin", cost: 5, stars: 2, traits: "Dark Star · Sniper · Eradicator", items: "Infinity Edge, Last Whisper, Giant Slayer", role: "primary carry" },
+      { name: "Vex", cost: 5, stars: 1, traits: "Dark Lady · Psionic", items: "—", role: "secondary AP" },
+      { name: "Aurelion Sol", cost: 4, stars: 2, traits: "Dark Star · Mecha", items: "Hand of Justice (flex)", role: "ramping AP" },
+      { name: "Karma", cost: 4, stars: 2, traits: "Vanguard · Redeemer", items: "—", role: "frontline support" },
+      { name: "Tahm Kench", cost: 4, stars: 2, traits: "Bulwark · Party Animal", items: "Warmog's, Gargoyle Stoneplate", role: "main tank" },
+      { name: "Illaoi", cost: 4, stars: 2, traits: "Brawler · Primordian", items: "Dragon's Claw", role: "tank" },
+      { name: "Ornn", cost: 4, stars: 2, traits: "Bulwark · Forge", items: "—", role: "forge artifact" },
+      { name: "Morgana", cost: 5, stars: 1, traits: "Dark Lady · Redeemer", items: "—", role: "anti-shield support" },
+    ],
+    itemPriority: {
+      carry:
+        "Jhin BIS: Infinity Edge (crit AD) → Last Whisper (armor shred stacks with Eradicator) → Giant Slayer (vs tanks). Sub Guinsoo's if you brick on bows. Avoid Runaan's — Jhin's 4th shot mechanic doesn't proc Runaan's well.",
+      tank:
+        "Tahm Kench wants Warmog's + Gargoyle + Dragon's Claw (or Bramble vs AD). Illaoi gets the 4th tank component slot.",
+      utility:
+        "Aurelion Sol can take Hand of Justice as a flex item. Save extras for the Ornn artifact roll.",
+    },
+    leveling: [
+      { stage: "2-1", action: "Play strongest board. Streak either way is fine.", econ: "Push to 50g." },
+      { stage: "3-2", action: "Stay 6 or level 7. Don't roll yet.", econ: "Cap interest." },
+      { stage: "4-1", action: "Level to 8 immediately. Roll for Aurelion 2, Karma 2, Tahm 2.", econ: "Spend down to ~20g." },
+      { stage: "4-5 / 5-1", action: "Slow-roll 50g for Jhin. Push 9 only after Jhin 2 is found.", econ: "Stay 50g until Jhin found." },
+      { stage: "5-2+", action: "Level to 9, add Vex/Morgana to cap. Roll for Jhin 3 if uncontested.", econ: "—" },
+    ],
+    positioning: {
+      grid: [
+        [null, "Karma", null, "Tahm Kench", null, "Illaoi", null],
+        [null, null, "Ornn", null, null, null, null],
+        [null, null, null, "Aurelion Sol", null, null, null],
+        ["Jhin", null, null, null, null, "Vex", "Morgana"],
+      ],
+      notes:
+        "JHIN HARD-CORNER. The far back corner is mandatory — every hex of distance to the enemy carry adds Sniper damage amp. Tahm Kench dead-center front to absorb engage. Karma front-side to get Vanguard shield value. Aurelion in mid-row protected from assassin drop. Mirror-flip if facing assassin lobby (Jhin opposite-corner from where they drop).",
+    },
+    strategy:
+      "Win condition: Jhin's 4th shot. Position him in the absolute farthest hex from the enemy carry. Eradicator (-14% MR/Armor) stacks multiplicatively with Last Whisper (-30% armor on hit) and Sniper damage amp (per hex of distance). His 4th shot can crit for 4000+ and execute via Dark Star Black Hole. The whole comp exists to keep Jhin alive long enough to fire 4 times.",
+    defensiveVariations:
+      "Vs assassins (Talon, Akali): swap Jhin's corner each round depending on enemy back row. Add Shen for Bastion. Place Karma directly in front of Jhin as a body-block. Vs heavy frontline: replace Giant Slayer item priority with Red Buff on a 2-cost trait bot to shred their tanks. Vs reroll AD comps: Bramble Vest on Tahm Kench instead of Dragon's Claw.",
+    counters:
+      "Loses to: assassins reaching Jhin in stage 4 before items come online. Anti-heal isn't a big deal (Jhin doesn't sustain). The hardest counter is your OWN tempo — if you're below 30 HP at 4-1 you cannot fast 8 safely; pivot to a reroll comp. Also weak to Stargazer Xayah on certain constellations because Xayah can match Jhin's burst with sustained DPS.",
+  },
+ 
+  // 4. =========================================================
   {
     id: "vex-fast-9",
     name: "Vex Fast 9",
@@ -215,11 +319,11 @@ const SEED_COMPS = [
     champions: [
       { name: "Vex", cost: 5, stars: 2, traits: "Dark Lady · Psionic", items: "Jeweled Gauntlet, Spear of Shojin, Rabadon's Deathcap", role: "carry" },
       { name: "Aurora", cost: 3, stars: 2, traits: "Psionic · Conduit", items: "—", role: "trait/utility" },
-      { name: "Karma", cost: 5, stars: 1, traits: "Vanguard · Redeemer", items: "Redemption (if extra)", role: "support" },
-      { name: "Leblanc", cost: 5, stars: 1, traits: "Rogue · Dark Lady", items: "Hand of Justice (optional)", role: "secondary AP" },
+      { name: "Karma", cost: 4, stars: 1, traits: "Vanguard · Redeemer", items: "Redemption (if extra)", role: "support" },
+      { name: "LeBlanc", cost: 4, stars: 1, traits: "Rogue · Dark Lady", items: "Hand of Justice (optional)", role: "secondary AP" },
       { name: "Ornn", cost: 4, stars: 2, traits: "Bulwark · Forge", items: "—", role: "tank/forge" },
       { name: "Tahm Kench", cost: 4, stars: 2, traits: "Bulwark · Party Animal", items: "Warmog's Armor, Gargoyle", role: "tank" },
-      { name: "Illaoi", cost: 4, stars: 2, traits: "Brawler · Primordian", items: "Dragon's Claw", role: "tank" },
+      { name: "Illaoi", cost: 3, stars: 2, traits: "Brawler · Primordian", items: "Dragon's Claw", role: "tank" },
       { name: "Bard", cost: 5, stars: 1, traits: "Conduit · Oracle", items: "—", role: "support" },
       { name: "Sona", cost: 5, stars: 1, traits: "Conduit · Redeemer", items: "—", role: "secondary support" },
     ],
@@ -243,7 +347,7 @@ const SEED_COMPS = [
     positioning: {
       grid: [
         [null, "Tahm Kench", "Illaoi", "Ornn", null, null, null],
-        [null, null, "Sona", null, "Karma", null, "Leblanc"],
+        [null, null, "Sona", null, "Karma", null, "LeBlanc"],
         [null, "Aurora", null, null, null, "Bard", null],
         ["Vex", null, null, null, null, null, null],
       ],
@@ -251,89 +355,379 @@ const SEED_COMPS = [
         "Vex hard-corner. Aurora next to her for Conduit mana. Tanks clumped center-front to absorb. Move Vex to opposite corner if facing assassin matchup. Vs Yi specifically, sandwich Vex behind Tahm Kench in same column.",
     },
     strategy:
-      "This comp wins by getting to 9 first with HP. The whole game plan is: don't waste gold. Don't over-level. Don't roll on 7. Once you hit 9, Vex 2 + 3 random 5-costs is usually enough. The flex slots (Bard, Sona, Leblanc) are whoever shows. Karma is core for Vanguard armor on the frontline.",
+      "This comp wins by getting to 9 first with HP. The whole game plan is: don't waste gold. Don't over-level. Don't roll on 7. Once you hit 9, Vex 2 + 3 random 5-costs is usually enough. The flex slots (Bard, Sona, LeBlanc) are whoever shows. Karma is core for Vanguard armor on the frontline.",
     defensiveVariations:
-      "If lobby has 2+ heavy AD comps, swap Illaoi → Rammus (Bastion) for stacking armor. Drop Sona for Shen if you need Bastion + free shields. Vs assassin-heavy lobby (Akali, Talon), play Vex bottom-row hard-corner with a Bastion frontline and add Leblanc front-corner as bait.",
+      "If lobby has 2+ heavy AD comps, swap Illaoi → Rammus (Bastion) for stacking armor. Drop Sona for Shen if you need Bastion + free shields. Vs assassin-heavy lobby (Akali, Talon), play Vex bottom-row hard-corner with a Bastion frontline and add LeBlanc front-corner as bait.",
     counters:
-      "Loses to: anyone who 3-stars a 4-cost (Yi 3, Illaoi 3). They simply outscale your level 9 board. Also vulnerable in stage 4 — if you're below 30 HP at 4-1, you cannot fast 9 safely; pivot to Leblanc or Karma reroll instead. Anti-mana (Sunder/Shred) on Vex is brutal.",
+      "Loses to: anyone who 3-stars a 4-cost (Yi 3, Illaoi 3). They simply outscale your level 9 board. Also vulnerable in stage 4 — if you're below 30 HP at 4-1, you cannot fast 9 safely; pivot to LeBlanc or Karma reroll instead. Anti-mana (Sunder/Shred) on Vex is brutal.",
   },
+ 
+  // 5. =========================================================
   {
-    id: "primordian-reroll",
-    name: "Primordian Reroll",
-    tier: "S",
-    playstyle: "Reroll · Defensive frontline",
+    id: "urgot-reroll",
+    name: "Urgot Reroll",
+    tier: "A",
+    playstyle: "3-cost reroll · Tank-carry",
     summary:
-      "Cheap, beginner-friendly, and one of the tankiest boards in the game. Cho'Gath 3 + Illaoi 2 is a wall. Great if you're learning positioning and economy.",
+      "Urgot is a tank that does damage. 3-star Urgot with tank items becomes the carry — he sustains forever and chunks the enemy frontline. One of the safest reroll lines for climbing.",
     champions: [
-      { name: "Cho'Gath", cost: 1, stars: 3, traits: "Brawler · Primordian", items: "Warmog's Armor, Gargoyle Stoneplate, Dragon's Claw", role: "carry tank" },
-      { name: "Rek'Sai", cost: 1, stars: 3, traits: "Primordian · Voyager", items: "Hand of Justice (optional)", role: "damage" },
-      { name: "Nasus", cost: 1, stars: 3, traits: "Primordian · Bastion", items: "—", role: "tank" },
-      { name: "Briar", cost: 1, stars: 3, traits: "Primordian · Brawler", items: "Bloodthirster", role: "secondary carry" },
-      { name: "Belveth", cost: 2, stars: 2, traits: "Primordian · Voyager · Eradicator", items: "—", role: "trait + damage" },
-      { name: "Illaoi", cost: 4, stars: 2, traits: "Brawler · Primordian", items: "—", role: "tank/damage" },
+      { name: "Urgot", cost: 3, stars: 3, traits: "Mecha · Brawler", items: "Warmog's Armor, Bramble Vest, Sterak's Gage", role: "tank carry" },
+      { name: "Cho'Gath", cost: 1, stars: 3, traits: "Brawler · Primordian", items: "Gargoyle Stoneplate", role: "front tank" },
+      { name: "Aatrox", cost: 1, stars: 3, traits: "Brawler · Doomer", items: "—", role: "tank" },
+      { name: "Gragas", cost: 2, stars: 2, traits: "Brawler · Party Animal", items: "Sunfire Cape", role: "secondary tank" },
+      { name: "Aurelion Sol", cost: 4, stars: 2, traits: "Dark Star · Mecha", items: "Hand of Justice", role: "Mecha + AP" },
+      { name: "The Mighty Mech", cost: 4, stars: 2, traits: "Mecha", items: "—", role: "Mecha trait + tank" },
+      { name: "Illaoi", cost: 3, stars: 2, traits: "Brawler · Primordian", items: "Dragon's Claw", role: "tank" },
       { name: "Ornn", cost: 4, stars: 2, traits: "Bulwark · Forge", items: "—", role: "forge artifact" },
     ],
     itemPriority: {
       carry:
-        "ALL items go on Cho'Gath. Warmog's first (HP), then Gargoyle (scaling armor), then Dragon's Claw (vs AP) OR Bramble (vs AD). He becomes the carry by surviving long enough to ult into multiple targets.",
+        "Urgot wants Warmog's + Bramble + Sterak's. He damages with his ult, scales off HP, and Bramble procs his Mecha synergy. Avoid Gargoyle on Urgot — Bramble is better since it returns damage.",
       tank:
-        "Cho'Gath IS the tank. Rek'Sai gets Hand of Justice if you have leftover sword + tear. Briar can take Bloodthirster as a secondary damage threat.",
+        "Cho'Gath gets one Gargoyle. Illaoi takes Dragon's Claw if you face AP comps. Gragas eats a Sunfire from the leftover rod.",
       utility:
-        "Don't slot Sunfire on Cho — it caps too fast for your scaling. Pray for Anima Visage or Rocket-Propelled Fist from Ornn forge.",
+        "Aurelion Sol takes Hand of Justice as a flex AP/heal item. Pray for Anima Visage from Ornn forge — pairs perfectly with Urgot.",
     },
     leveling: [
-      { stage: "2-1", action: "Win streak with strongest board. Hold all Primordian 1-costs.", econ: "Streak gold > interest early." },
-      { stage: "2-5", action: "Level to 5 if streaking, otherwise stay 4.", econ: "—" },
-      { stage: "3-2", action: "Level to 6. Start slow-rolling at 50g for 3-stars.", econ: "Stay at 50g, roll 10g at a time." },
-      { stage: "3-5 to 4-1", action: "Hard-roll for Cho 3, Reksai 3, Nasus 3. Hit at least 2 by 4-2.", econ: "Drop below 50g if needed." },
-      { stage: "4-2", action: "Level to 7 once 3-stars are mostly secured. Add Illaoi 2.", econ: "Rebuild econ." },
-      { stage: "5-1", action: "Level to 8. Add Ornn for forge.", econ: "—" },
+      { stage: "2-1", action: "Win streak if possible. Hold pairs of Primordian/Brawler 1-costs.", econ: "Push 50g by 2-5." },
+      { stage: "3-2", action: "Level to 6. Slow-roll for Cho'Gath 3 + Aatrox 3.", econ: "Stay 50g." },
+      { stage: "3-5", action: "Level to 7. Start hunting Urgot copies aggressively.", econ: "Drop to 30g if needed." },
+      { stage: "4-1", action: "Hard-roll for Urgot 3 if 2+ copies in hand. Otherwise stabilize and wait.", econ: "—" },
+      { stage: "4-5", action: "Hit Urgot 3 here at the latest. Add The Mighty Mech for Mecha synergy.", econ: "—" },
+      { stage: "5-1", action: "Level to 8. Add Aurelion Sol + Ornn.", econ: "—" },
     ],
     positioning: {
       grid: [
-        ["Nasus", null, "Illaoi", "Cho'Gath", "Ornn", null, null],
-        [null, "Briar", null, "Belveth", null, "Rek'Sai", null],
+        ["Cho'Gath", "Aatrox", "Urgot", "Illaoi", "The Mighty Mech", "Gragas", "Ornn"],
+        [null, null, null, "Aurelion Sol", null, null, null],
         [null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null],
       ],
       notes:
-        "Cho'Gath dead-center front so his ult catches multiple targets. Tanks flanking him to soak hits. Briar/Reksai one row back as secondary damage. Avoid corners — Cho needs to be central to maximize ult value.",
+        "Urgot mid-front. He's the carry but he's also a tank — he wants to be in the fight. Aurelion Sol one row back to ramp safely. The Mighty Mech anchors the right side. Cho'Gath far-left to body-block assassin drop tiles. Vs ranged: stack tanks tighter to reduce engage time on Urgot.",
     },
     strategy:
-      "The simplest tanked-game comp. You will survive every fight in stage 3. Goal: hit 3 three-stars by 4-1, then transition to level 7 with Illaoi. Don't get greedy pushing 8 — your power is the 3-star front. Late-game cap = level 8 with all 3-stars + Illaoi 2 + Ornn 2 + flex 5-cost (any).",
+      "Urgot 3 with Warmog's + Bramble does ~7000 effective HP and returns 90% of attack damage. Most enemies kill themselves attacking him. His ult drags the enemy carry into your frontline — devastating against backline-dependent comps (Jhin, Vex, Xayah). Mecha + Brawler stacking gives him stupid HP scaling. Ramp is slower than Bruiser Yi but ceiling is similar.",
     defensiveVariations:
-      "If lobby is AP-heavy: swap Dragon's Claw onto Cho instead of Bramble. Add Rammus over Briar for Bastion stacking armor. Vs Yi specifically, drop Belveth for Tahm Kench (Bulwark) and run Cho mid-back-row as anti-engage. Counter to backline assassins: place Nasus in the assassin-drop tile (back corner same side as enemy) to intercept.",
+      "Vs heavy AP: swap Bramble for Dragon's Claw on Urgot. Add Shen for Bastion at level 8. Vs assassin meta: position Urgot center (not corner) so his pull lands closer to your tanks. Vs Yi mirror: Bramble Vest on Cho'Gath too — Yi auto-attacks aggressively and gets shredded.",
     counters:
-      "Vulnerable to: high sustained DPS (Vex 2, Yi 3). True damage punches through your armor stacking — Eradicator-heavy enemy boards counter you. Anti-heal isn't a huge deal here since you don't sustain with omnivamp. If you don't hit 3-stars by 4-2 you will lose; this comp has a hard timing window.",
+      "Loses to: pure burst comps that delete Urgot before his pull lands (Vex Fast 9 with high AP). True damage (Eradicator stacks) bypasses his armor. Anti-heal isn't a big deal — he doesn't sustain through omnivamp. If you don't hit Urgot 3 by 4-5, this comp falls off a cliff.",
+  },
+ 
+  // 6. =========================================================
+  {
+    id: "stargazer-xayah",
+    name: "Stargazer Xayah",
+    tier: "A",
+    playstyle: "Hex-positioning · DPS carry",
+    summary:
+      "Constellation-dependent comp. Place Xayah on empowered hexes for huge attack speed and damage amp. Reads the lobby — different constellations want different carries.",
+    champions: [
+      { name: "Xayah", cost: 4, stars: 2, traits: "Stargazer · Sniper", items: "Guinsoo's Rageblade, Last Whisper, Infinity Edge", role: "carry" },
+      { name: "Aurora", cost: 3, stars: 2, traits: "Psionic · Conduit · Stargazer", items: "—", role: "Stargazer + mana support" },
+      { name: "Diana", cost: 3, stars: 2, traits: "Stargazer · Anima", items: "—", role: "Stargazer trait" },
+      { name: "Zoe", cost: 2, stars: 2, traits: "Stargazer · Anima", items: "—", role: "Stargazer 2-cost" },
+      { name: "LeBlanc", cost: 4, stars: 2, traits: "Rogue · Dark Lady · Stargazer", items: "Hand of Justice (flex)", role: "Stargazer + AP" },
+      { name: "Karma", cost: 4, stars: 2, traits: "Vanguard · Redeemer", items: "—", role: "frontline support" },
+      { name: "Tahm Kench", cost: 4, stars: 2, traits: "Bulwark · Party Animal", items: "Warmog's, Gargoyle, Dragon's Claw", role: "main tank" },
+      { name: "Ornn", cost: 4, stars: 2, traits: "Bulwark · Forge", items: "—", role: "forge artifact" },
+    ],
+    itemPriority: {
+      carry:
+        "Xayah BIS: Guinsoo's Rageblade (stacking AS) → Last Whisper → Infinity Edge. Sub Runaan's Hurricane for AOE pressure. The constellation determines whether you go AS or burst — Huntress = AS items, Serpent/Medallion = damage amp items.",
+      tank:
+        "Tahm Kench gets all three tank slots. He's your only real frontline — invest fully. Bramble vs AD lobbies, Dragon's Claw vs AP.",
+      utility:
+        "LeBlanc takes Hand of Justice as a flex damage/heal item. Save extras for Ornn forge.",
+    },
+    leveling: [
+      { stage: "2-1", action: "Look at constellation FIRST — it dictates everything. Play strongest Stargazer 2-cost board.", econ: "Streak whichever way." },
+      { stage: "3-2", action: "Level 6. Hunt Aurora + Diana 2 first (Stargazer 4).", econ: "Stay above 50g." },
+      { stage: "3-5", action: "Level 7. Find Xayah copies + Karma.", econ: "Roll if streaking." },
+      { stage: "4-1", action: "Roll for Xayah 2 + Tahm 2. Position Xayah on YOUR empowered hex.", econ: "Spend down to ~20g." },
+      { stage: "4-5", action: "Level 8 if HP > 30. Add Ornn for Bulwark.", econ: "—" },
+      { stage: "5-1", action: "Find Stargazer 6 (drop a non-Stargazer for LeBlanc).", econ: "—" },
+    ],
+    positioning: {
+      grid: [
+        [null, "Karma", null, "Tahm Kench", null, "Ornn", null],
+        [null, null, null, null, null, null, null],
+        [null, null, null, "Aurora", null, "Diana", null],
+        [null, "Xayah", null, null, "Zoe", null, "LeBlanc"],
+      ],
+      notes:
+        "POSITIONING IS THE COMP. Every game your empowered hexes are in different spots — adjust grid before each round. Xayah goes on an empowered hex back row. Stargazer trait carriers (Aurora, Diana, Zoe) also want empowered hexes — prioritize Xayah, then Aurora, then trait stack. Tahm Kench dead-center to anchor.",
+    },
+    strategy:
+      "Win condition is the constellation. Huntress (mark + AS) is the best for Xayah carry. Serpent (poison) wants Stargazer DPS units stacking. Medallion is damage amp — burst friendly. Always check the constellation map before placing units. The skill of this comp is adapting positioning every fight — bad players play it like a static comp and lose.",
+    defensiveVariations:
+      "Vs assassins: pull Xayah off corner empowered hex into a center empowered hex (less optimal damage but survival). Add Shen if you have spare Stargazer slot for Bastion. Vs heavy frontline: focus ALL items on Xayah — drop Tahm Kench items for Red Buff on a Stargazer trait bot to shred enemy tanks. Vs Jhin mirror: hard-corner Xayah opposite-side and pray Sniper distance favors you.",
+    counters:
+      "Loses to: assassins reaching Xayah on bad constellations (when empowered hexes are in vulnerable positions). Heavy CC (Vex stun) interrupts her ult ramp. Anti-heal hurts since Guinsoo + IE relies on omnivamp from items. The hardest counter is bricked constellations — sometimes the empowered hexes simply aren't where you need them; pivot or reroll out.",
+  },
+ 
+  // 7. =========================================================
+  {
+    id: "twisted-fate-reroll",
+    name: "Twisted Fate Reroll",
+    tier: "A",
+    playstyle: "1-cost reroll · Mid-game burst",
+    summary:
+      "Beginner-friendly reroll line. TF 3-star with full AP items deletes anything in stage 4. Predictable power curve, easy to execute, Top 4 consistency is excellent.",
+    champions: [
+      { name: "Twisted Fate", cost: 1, stars: 3, traits: "Fateweaver · Galaxy Hunter", items: "Spear of Shojin, Jeweled Gauntlet, Rabadon's Deathcap", role: "primary carry" },
+      { name: "Cho'Gath", cost: 1, stars: 3, traits: "Brawler · Primordian", items: "Warmog's Armor", role: "front tank" },
+      { name: "Leona", cost: 1, stars: 3, traits: "Anima · Bastion", items: "Gargoyle Stoneplate", role: "tank" },
+      { name: "Veigar", cost: 1, stars: 3, traits: "Meeple · Replicator", items: "—", role: "secondary AP" },
+      { name: "Zoe", cost: 2, stars: 2, traits: "Stargazer · Anima", items: "—", role: "trait support" },
+      { name: "Mordekaiser", cost: 2, stars: 2, traits: "Doomer · Brawler", items: "—", role: "secondary tank" },
+      { name: "Illaoi", cost: 3, stars: 2, traits: "Brawler · Primordian", items: "Dragon's Claw", role: "tank" },
+      { name: "Ornn", cost: 4, stars: 2, traits: "Bulwark · Forge", items: "—", role: "forge artifact" },
+    ],
+    itemPriority: {
+      carry:
+        "Twisted Fate BIS: Spear of Shojin (mana for spam ult) → Jeweled Gauntlet (crit AP) → Rabadon's. Sub Blue Buff if no tear. TF's ult (gold card stun) is the win-con — every cast both stuns and bursts.",
+      tank:
+        "Cho'Gath gets Warmog's. Leona gets Gargoyle Stoneplate (synergizes with Bastion stacking). Illaoi takes Dragon's Claw vs AP threats.",
+      utility:
+        "Hold all rods for TF — don't make any tank items until you've committed Shojin + JG + Rabadon. Pray for Statikk Shiv or Anima Visage from Ornn.",
+    },
+    leveling: [
+      { stage: "2-1", action: "Win streak. Hold every TF copy.", econ: "Streak gold > interest." },
+      { stage: "2-5", action: "Level to 5 if streaking. Stay 4 otherwise.", econ: "—" },
+      { stage: "3-2", action: "Level to 6. Slow-roll at 50g for TF 3 + Cho 3 + Leona 3 + Veigar 3.", econ: "Stay above 50g, roll 10g at a time." },
+      { stage: "3-5 to 4-1", action: "Hard-roll for the 3-stars. Hit at least 3 by 4-2 to be top 4.", econ: "Drop below 30g if needed." },
+      { stage: "4-2", action: "Level to 7 once 3-stars are secured. Add Illaoi 2.", econ: "Rebuild econ." },
+      { stage: "5-1", action: "Level to 8. Add Ornn + flex 4-cost.", econ: "—" },
+    ],
+    positioning: {
+      grid: [
+        ["Leona", null, "Cho'Gath", "Illaoi", "Mordekaiser", null, "Ornn"],
+        [null, null, null, "Zoe", null, null, null],
+        [null, null, null, "Veigar", null, null, null],
+        ["Twisted Fate", null, null, null, null, null, null],
+      ],
+      notes:
+        "TF backline corner — he chains ult casts with Shojin and the corner protects him from frontline cleave. Leona far-left to body-block assassins. Cho'Gath center-front for ult AOE. Veigar mid-row out of cleave range. Mirror-flip vs assassin lobby.",
+    },
+    strategy:
+      "TF's ult is a multi-target stun + AP nuke. With Shojin he casts every 2-3 seconds. Stage 4 he chain-stuns the enemy backline and bursts them down. The comp is very stable: 1-cost reroll means you're rarely contested, and the cap (level 8 + 4 three-stars + Illaoi + Ornn) is easy to reach. Best for climbing low elo where games feel chaotic.",
+    defensiveVariations:
+      "Vs ranged: position TF center-back instead of corner so he's closer to ult range on enemy carries. Vs Yi: drop Mordekaiser for Tahm Kench (Bulwark), add Dragon's Claw on Cho'Gath. Vs Vex Fast 9: rush level 8 instead of capping at 7 — you need Ornn forge artifact RNG to keep up with Vex 2.",
+    counters:
+      "Loses to: assassin spike that kills TF before stun ramp (Talon, Akali). Heavy Bastion frontlines tank his single-target burst. Mortal Reminder on enemy carry shreds Veigar's healing if you item him. The biggest weakness is the reroll RNG — if you don't hit 3-stars by 4-2 you slow-bleed to 8th.",
+  },
+ 
+  // 8. =========================================================
+  {
+    id: "vanguard-karma-leblanc",
+    name: "Vanguard Karma LeBlanc",
+    tier: "A",
+    playstyle: "Standard · Vertical Vanguard",
+    summary:
+      "Karma front-row tank that does damage with Vanguard shield scaling, plus LeBlanc backline burst. Balanced 4-cost board, very tanky frontline, scales well into level 9.",
+    champions: [
+      { name: "LeBlanc", cost: 4, stars: 2, traits: "Rogue · Dark Lady · Stargazer", items: "Jeweled Gauntlet, Hand of Justice, Rabadon's Deathcap", role: "primary AP carry" },
+      { name: "Karma", cost: 4, stars: 2, traits: "Vanguard · Redeemer", items: "Warmog's Armor, Sterak's Gage", role: "tank-DPS hybrid" },
+      { name: "Riven", cost: 4, stars: 2, traits: "Vanguard · Space Groove", items: "—", role: "Vanguard frontline" },
+      { name: "Shen", cost: 5, stars: 1, traits: "Bastion · Vanguard", items: "—", role: "Vanguard cap" },
+      { name: "Tahm Kench", cost: 4, stars: 2, traits: "Bulwark · Party Animal", items: "Gargoyle Stoneplate, Dragon's Claw", role: "main tank" },
+      { name: "Ornn", cost: 4, stars: 2, traits: "Bulwark · Forge", items: "—", role: "forge artifact" },
+      { name: "Aurora", cost: 3, stars: 2, traits: "Psionic · Conduit", items: "—", role: "mana support" },
+      { name: "Zed", cost: 5, stars: 1, traits: "(Hero Augment only)", items: "—", role: "secondary AD if rolled" },
+    ],
+    itemPriority: {
+      carry:
+        "LeBlanc BIS: Jeweled Gauntlet → Hand of Justice (heal + AP) → Rabadon's. Avoid Spear of Shojin — LeBlanc's ult cycle is fast enough on Blue Buff if you brick rods.",
+      tank:
+        "Karma is half-tank, half-DPS. Warmog's + Sterak's lets her survive AND damage. Tahm Kench takes Gargoyle + Dragon's Claw.",
+      utility:
+        "Shen takes Edge of Night if you have spare components. Don't over-itemize Riven — she's a trait bot mostly.",
+    },
+    leveling: [
+      { stage: "2-1", action: "Play strongest. Streak both directions are fine for this comp.", econ: "Push 50g by 2-5." },
+      { stage: "3-2", action: "Stay level 6. Tempo board with Vanguard 2.", econ: "Cap interest." },
+      { stage: "3-5", action: "Level 7. Start looking for LeBlanc + Karma copies.", econ: "Stay 50g." },
+      { stage: "4-1", action: "Level 8. Roll for LeBlanc 2, Karma 2, Tahm 2.", econ: "Spend to ~30g." },
+      { stage: "4-5", action: "Push to 9 if HP > 50 OR slow-roll 50g for full 4-cost board.", econ: "—" },
+      { stage: "5-1+", action: "Add Shen for Vanguard 4. Cap with any 5-cost (Bard/Sona/Morgana).", econ: "—" },
+    ],
+    positioning: {
+      grid: [
+        [null, "Riven", "Karma", "Tahm Kench", "Shen", "Ornn", null],
+        [null, null, null, "Aurora", null, null, null],
+        [null, null, null, null, null, null, null],
+        ["LeBlanc", null, null, null, null, null, "Zed"],
+      ],
+      notes:
+        "LeBlanc hard-corner backline. Karma front-mid because Vanguard wants her in the action — her shield scales with HP and her ult procs off taking damage. Riven left-side to absorb pulls (Blitzcrank counterplay). Shen right-side for Bastion synergy. Mirror-flip vs assassin lobby.",
+    },
+    strategy:
+      "Hybrid tank-DPS comp. Vanguard 4 gives every front-line unit a massive shield twice per fight. Karma simultaneously tanks AND deals damage. LeBlanc backline R nuke takes care of squishy targets. Less explosive than Vex Fast 9 but more consistent — you don't need a specific 5-cost to be online. Caps very well at level 9 with Shen + Bard or Sona.",
+    defensiveVariations:
+      "Vs assassins: drop Riven for Rammus (Bastion), giving Bastion 4 + Vanguard 4 — extreme tankiness. Vs Jhin Dark Stars: position LeBlanc opposite-corner from Jhin and add Edge of Night to her items so she can't be focus-fired. Vs Bruiser Yi: Bramble on Karma instead of Sterak's — returns damage to him as he attacks.",
+    counters:
+      "Loses to: pure DPS comps that out-trade through shields (Yi 3, Xayah on good constellations). Anti-shield (Morgana ult) deletes your Vanguard shield value. Anti-heal hurts Karma's Warmog's + Sterak heal stack. If you brick LeBlanc copies past 4-5, you have no real damage threat.",
+  },
+ 
+  // 9. =========================================================
+  {
+    id: "leona-teemo-reroll",
+    name: "Leona Teemo Reroll",
+    tier: "A",
+    playstyle: "1-cost reroll · Anima loss-streak",
+    summary:
+      "Open-fort, lose-streak hard, stack Anima Tech for prototype weapons, then reroll Teemo to 3-star with custom weapon items. Extremely high ceiling on lucky weapon RNG.",
+    champions: [
+      { name: "Teemo", cost: 1, stars: 3, traits: "Galaxy Hunter · Anima", items: "Anima Weapon (variable), Guinsoo's Rageblade, Hand of Justice", role: "primary carry" },
+      { name: "Leona", cost: 1, stars: 3, traits: "Anima · Bastion", items: "Warmog's Armor, Gargoyle Stoneplate", role: "front tank" },
+      { name: "Zoe", cost: 2, stars: 3, traits: "Stargazer · Anima", items: "—", role: "Anima trait + utility" },
+      { name: "Diana", cost: 3, stars: 2, traits: "Stargazer · Anima", items: "—", role: "Anima trait" },
+      { name: "LeBlanc", cost: 4, stars: 2, traits: "Rogue · Dark Lady · Anima", items: "Anima Weapon (if rolled)", role: "secondary AP" },
+      { name: "Cho'Gath", cost: 1, stars: 3, traits: "Brawler · Primordian", items: "—", role: "tank" },
+      { name: "Mordekaiser", cost: 2, stars: 2, traits: "Doomer · Brawler", items: "—", role: "secondary tank" },
+      { name: "Ornn", cost: 4, stars: 2, traits: "Bulwark · Forge", items: "—", role: "forge artifact" },
+    ],
+    itemPriority: {
+      carry:
+        "Teemo BIS: Anima Weapon (whatever you roll — most are huge on Anima units) + Guinsoo's Rageblade + Hand of Justice. The Anima weapon is the win condition — sometimes you save Tech for a stronger one, sometimes you take the first to avoid bricking.",
+      tank:
+        "Leona Warmog's + Gargoyle. Cho'Gath takes leftover bramble or vest. This comp is tank-light because most damage comes from Teemo's poison.",
+      utility:
+        "Hold a tear to make Guinsoo's. Don't commit your rod-heavy items until you see your Anima weapon — sometimes it changes your priority entirely.",
+    },
+    leveling: [
+      { stage: "2-1", action: "OPEN FORT. Sell every unit you don't plan to keep. Lose streak hard.", econ: "Streak loss = +1 Tech per loss; cap interest at 50g." },
+      { stage: "2-5", action: "Stay level 4. Hold pairs of Anima 1-costs (Leona, Teemo).", econ: "50g+." },
+      { stage: "3-2", action: "Level to 6. First Anima Weapon at 100 Tech — usually take it unless lobby is slow.", econ: "Stay 50g." },
+      { stage: "3-5 to 4-1", action: "Roll for Teemo 3 + Leona 3. Hit Zoe 3 for double Anima trait.", econ: "Drop econ — this is the spike round." },
+      { stage: "4-2", action: "Level 7. Add Diana for Stargazer + Anima.", econ: "Rebuild." },
+      { stage: "5-1", action: "Level 8. Take a second Anima Weapon if available. Add Ornn.", econ: "—" },
+    ],
+    positioning: {
+      grid: [
+        ["Leona", null, "Cho'Gath", "Mordekaiser", null, null, "Ornn"],
+        [null, null, null, "Diana", null, null, null],
+        [null, null, "Zoe", null, "LeBlanc", null, null],
+        ["Teemo", null, null, null, null, null, null],
+      ],
+      notes:
+        "Teemo back-corner to maximize poison spread and avoid being focused. Leona far-left to absorb assassin drops (her 3-star Bastion makes her near-untargetable). Diana mid-row for Stargazer hex empowerment. Mirror-flip based on enemy carry side.",
+    },
+    strategy:
+      "High variance comp. Lose streak hard in stages 2-3 to bank Tech. The first Anima Weapon at ~3-2 defines your game — some weapons (Lifelong Friend, Stargazer Lens) are S+ on Teemo, some (lower-tier weapons) make this a Top 4 comp instead of 1st. The decision to take vs save Tech is the skill of the comp. Teemo 3 with a good Anima Weapon hits ~6000 DPS late.",
+    defensiveVariations:
+      "Vs heavy frontline: prioritize Red Buff on Teemo (-25% healing) over Hand of Justice. Vs assassins: position Teemo center-back instead of corner. Add Shen at level 8 for Bastion. Vs anti-heal lobby: skip Hand of Justice entirely, prioritize raw damage (Last Whisper instead).",
+    counters:
+      "Loses to: anyone who hits faster than you (1-cost rerolls happen at level 6 — if Bruiser Yi gets to level 7 first he eats you). Bad Anima Weapon RNG is a 5-8th placement automatically. Anti-poison effects (none directly in Set 17 but high-MR comps) reduce Teemo's value. Don't force this comp without lose streak — it requires the Anima ramp.",
+  },
+ 
+  // 10. ========================================================
+  {
+    id: "cho-ezreal-reroll",
+    name: "Cho'Gath Ezreal Reroll",
+    tier: "A",
+    playstyle: "1-cost reroll · Backline carry + super tank",
+    summary:
+      "Ezreal carry behind the tankiest 1-cost frontline in the set. Cho 3 + Aatrox 3 + Nasus 3 is nearly unkillable. Ezreal one-shots from the back. Top 2 consistency.",
+    champions: [
+      { name: "Ezreal", cost: 1, stars: 3, traits: "Galaxy Hunter · Sniper", items: "Spear of Shojin, Jeweled Gauntlet, Rabadon's Deathcap", role: "primary carry" },
+      { name: "Cho'Gath", cost: 1, stars: 3, traits: "Brawler · Primordian", items: "Warmog's Armor, Gargoyle Stoneplate", role: "front tank" },
+      { name: "Aatrox", cost: 1, stars: 3, traits: "Brawler · Doomer", items: "—", role: "tank" },
+      { name: "Nasus", cost: 1, stars: 3, traits: "Primordian · Bastion", items: "Bramble Vest", role: "tank" },
+      { name: "Caitlyn", cost: 1, stars: 3, traits: "N.O.V.A. · Sniper", items: "—", role: "Sniper synergy" },
+      { name: "Bel'Veth", cost: 2, stars: 2, traits: "Primordian · Voyager · Eradicator", items: "—", role: "trait support" },
+      { name: "Illaoi", cost: 3, stars: 2, traits: "Brawler · Primordian", items: "Dragon's Claw", role: "tank" },
+      { name: "Ornn", cost: 4, stars: 2, traits: "Bulwark · Forge", items: "—", role: "forge artifact" },
+    ],
+    itemPriority: {
+      carry:
+        "Ezreal BIS: Spear of Shojin (mana for ult spam) → Jeweled Gauntlet → Rabadon's. Ezreal's ult is global execute on his current target — Shojin makes him cast every 2 seconds.",
+      tank:
+        "Cho'Gath Warmog's + Gargoyle. Nasus Bramble (synergizes with his Bastion stacking). Illaoi Dragon's Claw vs AP threats. Aatrox takes nothing — he's the budget tank.",
+      utility:
+        "Sniper trait amps Ezreal's distance damage. Caitlyn fills the second Sniper slot. Save extras for Ornn.",
+    },
+    leveling: [
+      { stage: "2-1", action: "Win streak with Brawler/Primordian board. Hold all 1-cost copies.", econ: "Streak gold." },
+      { stage: "3-2", action: "Level 6. Slow-roll at 50g for Cho 3, Aatrox 3, Nasus 3, Ezreal 3.", econ: "Stay 50g, roll 10g at a time." },
+      { stage: "3-5 to 4-1", action: "Hit 3 of the 4 three-stars by 4-2. Hard-roll if needed.", econ: "Drop below 30g if necessary." },
+      { stage: "4-2", action: "Level 7. Add Illaoi 2 + Bel'Veth 2 for Primordian 5.", econ: "Rebuild." },
+      { stage: "4-5", action: "Hit final 3-star (whichever you missed).", econ: "—" },
+      { stage: "5-1", action: "Level 8. Add Ornn for Bulwark + forge.", econ: "—" },
+    ],
+    positioning: {
+      grid: [
+        ["Nasus", "Aatrox", "Cho'Gath", "Illaoi", "Bel'Veth", null, "Ornn"],
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, "Caitlyn", null, null],
+        ["Ezreal", null, null, null, null, null, null],
+      ],
+      notes:
+        "Ezreal back-corner to maximize Sniper distance amp. Caitlyn mid-row to share Sniper trait without competing for hex space. Nasus far-left as anti-assassin body block (Bastion 3-star is a wall). Cho'Gath center-front for AOE ult. Mirror corner based on enemy.",
+    },
+    strategy:
+      "The 'build a wall, snipe through it' comp. Three 3-star tanks make this nearly impossible to break through in stage 4. Ezreal's ult executes at 30% HP — combined with Sniper distance amp, he chain-deletes squishy carries. Lower ceiling than Yi 3 but very stable: 4 three-stars happens reliably with 50g slow-rolling. Best for climbing when you need consistent Top 4 placements.",
+    defensiveVariations:
+      "Vs Vex Fast 9 / heavy AP: swap Bramble on Nasus → Dragon's Claw, drop Aatrox for Tahm Kench (Bulwark) at level 8. Vs assassin meta: Caitlyn back-corner alongside Ezreal as decoy, Nasus + Aatrox as flanks. Vs Bruiser Yi mirror: focus Ezreal items on burst (Jeweled Gauntlet first) — you can't out-DPS Yi but you can chain-execute his bruisers as they dip below 30%.",
+    counters:
+      "Loses to: comps that out-cap at level 8/9 (Vex Fast 9, Jhin Dark Stars). Eradicator true damage cuts through your armor stacking. Anti-mana effects shut down Ezreal ult cycle. Don't play this on patches where 1-cost reroll is contested by 2+ players — Ezreal copies dry up fast.",
   },
 ];
-
+ 
+// Riot champion numeric IDs — used to build reliable image URLs.
+// (These IDs are stable across patches.)
+const CHAMPION_IDS = {
+  "Aatrox": 266, "Akali": 84, "Aurelion Sol": 136, "Aurora": 893,
+  "Bard": 432, "Belveth": 200, "Bel'Veth": 200, "Blitzcrank": 53,
+  "Briar": 233, "Caitlyn": 51, "Cho'Gath": 31, "Chogath": 31,
+  "Corki": 42, "Diana": 131, "Ezreal": 81, "Fiora": 114, "Fizz": 105,
+  "Gnar": 150, "Gragas": 79, "Graves": 104, "Gwen": 887,
+  "Illaoi": 420, "Jax": 24, "Jhin": 202, "Jinx": 222,
+  "Kai'Sa": 145, "Kaisa": 145, "Karma": 43, "Kindred": 203,
+  "LeBlanc": 7, "Leblanc": 7, "Leona": 89, "Lissandra": 127, "Lulu": 117,
+  "Maokai": 57, "Master Yi": 11, "Milio": 902, "Miss Fortune": 21,
+  "Mordekaiser": 82, "Morgana": 25, "Nami": 267, "Nasus": 75, "Nunu": 20,
+  "Ornn": 516, "Pantheon": 80, "Poppy": 78, "Pyke": 555,
+  "Rammus": 33, "Rek'Sai": 421, "Reksai": 421,
+  "Rhaast": 141, "Riven": 92, "Samira": 360,
+  "Shen": 98, "Sona": 37, "Tahm Kench": 223, "Talon": 91,
+  "Teemo": 17, "Twisted Fate": 4, "Urgot": 6, "Veigar": 45,
+  "Vex": 711, "Viktor": 112, "Xayah": 498, "Zed": 238, "Zoe": 142,
+};
+ 
 // ---- helpers ----
 const STORAGE_KEY = "tft:codex:comps:v2";        // current (frontline-top)
 const STORAGE_KEY_V1 = "tft:codex:comps:v1";    // legacy (frontline-bottom)
-
+ 
 // Convert a champion display name to a CommunityDragon asset slug.
 // "Master Yi" -> "masteryi", "Cho'Gath" -> "chogath", "Bel'Veth" -> "belveth"
 function champSlug(name) {
   if (!name) return "";
   return name.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
-
+ 
 // Build the default portrait URL from a champion name.
-// Falls back gracefully via onError to initials if the image 404s
-// (e.g. for TFT-exclusive units like "The Mighty Mech").
+// Prefers Community Dragon's numeric-ID endpoint (most reliable), falls back
+// to the slug-based path for TFT-only units (Meepsie, The Mighty Mech, etc).
+// Final fallback is the initials badge inside ChampPortrait.
 function defaultChampImage(name) {
+  if (!name) return "";
+  const id = CHAMPION_IDS[name];
+  if (id) {
+    return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${id}.png`;
+  }
   const slug = champSlug(name);
   if (!slug) return "";
   return `https://raw.communitydragon.org/latest/game/assets/characters/${slug}/hud/${slug}_square.png`;
 }
-
+ 
 function getChampImageURL(champ) {
   if (!champ) return "";
   if (champ.image && champ.image.trim()) return champ.image.trim();
   return defaultChampImage(champ.name);
 }
-
+ 
 // Reusable portrait component with image + initials fallback
 function ChampPortrait({ champ, size = 48, square = false }) {
   const [failed, setFailed] = useState(false);
@@ -347,7 +741,7 @@ function ChampPortrait({ champ, size = 48, square = false }) {
     .slice(0, 2)
     .join("")
     .toUpperCase();
-
+ 
   const baseStyle = {
     width: size,
     height: size,
@@ -359,7 +753,7 @@ function ChampPortrait({ champ, size = 48, square = false }) {
     background: cost.bg,
     display: "block",
   };
-
+ 
   if (failed || !url) {
     return (
       <div
@@ -378,7 +772,7 @@ function ChampPortrait({ champ, size = 48, square = false }) {
       </div>
     );
   }
-
+ 
   return (
     <img
       src={url}
@@ -389,7 +783,7 @@ function ChampPortrait({ champ, size = 48, square = false }) {
     />
   );
 }
-
+ 
 const newBlankComp = () => ({
   id: `comp-${Date.now()}`,
   name: "New Composition",
@@ -412,7 +806,7 @@ const newBlankComp = () => ({
   defensiveVariations: "",
   counters: "",
 });
-
+ 
 // =============================================================
 // Main Component
 // =============================================================
@@ -424,7 +818,7 @@ function TFTCodex() {
   const [search, setSearch] = useState("");
   const [loadState, setLoadState] = useState("loading"); // loading | ready
   const [tierFilter, setTierFilter] = useState("ALL");
-
+ 
   // Load from persistent storage on mount
   useEffect(() => {
     (async () => {
@@ -470,7 +864,7 @@ function TFTCodex() {
       setLoadState("ready");
     })();
   }, []);
-
+ 
   // Save whenever comps change (after initial load)
   useEffect(() => {
     if (loadState !== "ready") return;
@@ -482,12 +876,12 @@ function TFTCodex() {
       }
     })();
   }, [comps, loadState]);
-
+ 
   const selected = useMemo(
     () => comps.find((c) => c.id === selectedId) || comps[0],
     [comps, selectedId]
   );
-
+ 
   const filtered = useMemo(() => {
     return comps.filter((c) => {
       if (tierFilter !== "ALL" && c.tier !== tierFilter) return false;
@@ -500,7 +894,7 @@ function TFTCodex() {
       );
     });
   }, [comps, search, tierFilter]);
-
+ 
   function startEdit() {
     setDraft(JSON.parse(JSON.stringify(selected)));
     setEditing(true);
@@ -558,9 +952,9 @@ function TFTCodex() {
     setComps(SEED_COMPS);
     setSelectedId(SEED_COMPS[0].id);
   }
-
+ 
   const view = editing ? draft : selected;
-
+ 
   return (
     <div style={styles.shell}>
       <BgEffects />
@@ -606,7 +1000,7 @@ function TFTCodex() {
     </div>
   );
 }
-
+ 
 // =============================================================
 // Top bar
 // =============================================================
@@ -657,7 +1051,7 @@ function Topbar({ onNew, onExport, onImport, onReset }) {
     </header>
   );
 }
-
+ 
 // =============================================================
 // Sidebar
 // =============================================================
@@ -719,7 +1113,7 @@ function Sidebar({ comps, allCount, selectedId, onSelect, search, setSearch, tie
     </aside>
   );
 }
-
+ 
 function TierBadge({ tier, big }) {
   const t = TIER_STYLES[tier] || TIER_STYLES.B;
   return (
@@ -744,13 +1138,13 @@ function TierBadge({ tier, big }) {
     </div>
   );
 }
-
+ 
 // =============================================================
 // Comp View (read or edit mode)
 // =============================================================
 function CompView({ comp, editing, onChange, onEdit, onCancel, onSave, onDuplicate, onDelete, canDelete }) {
   const update = (patch) => onChange({ ...comp, ...patch });
-
+ 
   return (
     <div style={styles.compRoot}>
       {/* Header */}
@@ -834,7 +1228,7 @@ function CompView({ comp, editing, onChange, onEdit, onCancel, onSave, onDuplica
           )}
         </div>
       </section>
-
+ 
       {/* Final Board */}
       <Section title="Final Board" icon={<Icon name="sparkles" size={16} />}>
         <ChampionList
@@ -843,7 +1237,7 @@ function CompView({ comp, editing, onChange, onEdit, onCancel, onSave, onDuplica
           onChange={(champs) => update({ champions: champs })}
         />
       </Section>
-
+ 
       {/* Item Priority */}
       <Section title="Item Priority" icon={<Icon name="swords" size={16} />}>
         <div style={styles.itemGrid}>
@@ -876,7 +1270,7 @@ function CompView({ comp, editing, onChange, onEdit, onCancel, onSave, onDuplica
           ))}
         </div>
       </Section>
-
+ 
       {/* Leveling Guide */}
       <Section title="Leveling & Economy Guide" icon={<Icon name="trending-up" size={16} />}>
         <LevelingTable
@@ -885,7 +1279,7 @@ function CompView({ comp, editing, onChange, onEdit, onCancel, onSave, onDuplica
           onChange={(rows) => update({ leveling: rows })}
         />
       </Section>
-
+ 
       {/* Positioning */}
       <Section title="Positioning" icon={<Icon name="target" size={16} />}>
         <PositioningEditor
@@ -895,7 +1289,7 @@ function CompView({ comp, editing, onChange, onEdit, onCancel, onSave, onDuplica
           onChange={(p) => update({ positioning: p })}
         />
       </Section>
-
+ 
       {/* Strategy */}
       <Section title="Strategy & Reasoning" icon={<Icon name="book-open" size={16} />}>
         {editing ? (
@@ -910,7 +1304,7 @@ function CompView({ comp, editing, onChange, onEdit, onCancel, onSave, onDuplica
           <div style={styles.proseBox}>{comp.strategy || <em style={{ opacity: 0.5 }}>—</em>}</div>
         )}
       </Section>
-
+ 
       {/* Defensive Variations */}
       <Section title="Defensive Variations" icon={<Icon name="shield" size={16} />}>
         {editing ? (
@@ -925,7 +1319,7 @@ function CompView({ comp, editing, onChange, onEdit, onCancel, onSave, onDuplica
           <div style={styles.proseBox}>{comp.defensiveVariations || <em style={{ opacity: 0.5 }}>—</em>}</div>
         )}
       </Section>
-
+ 
       {/* Counters */}
       <Section title="Counters & Watch For" icon={<Icon name="alert-triangle" size={16} />}>
         {editing ? (
@@ -940,12 +1334,12 @@ function CompView({ comp, editing, onChange, onEdit, onCancel, onSave, onDuplica
           <div style={styles.proseBox}>{comp.counters || <em style={{ opacity: 0.5 }}>—</em>}</div>
         )}
       </Section>
-
+ 
       <div style={{ height: 60 }} />
     </div>
   );
 }
-
+ 
 function emptyGrid() {
   return [
     [null, null, null, null, null, null, null],
@@ -954,7 +1348,7 @@ function emptyGrid() {
     [null, null, null, null, null, null, null],
   ];
 }
-
+ 
 function Section({ title, icon, children }) {
   return (
     <section style={styles.section}>
@@ -967,7 +1361,7 @@ function Section({ title, icon, children }) {
     </section>
   );
 }
-
+ 
 // =============================================================
 // Champion list
 // =============================================================
@@ -1006,7 +1400,7 @@ function ChampionList({ champions, editing, onChange }) {
     </div>
   );
 }
-
+ 
 function ChampCard({ champ, editing, onChange, onRemove }) {
   const cost = COST_COLORS[champ.cost] || COST_COLORS[1];
   return (
@@ -1114,7 +1508,7 @@ function ChampCard({ champ, editing, onChange, onRemove }) {
     </div>
   );
 }
-
+ 
 // =============================================================
 // Leveling Table
 // =============================================================
@@ -1188,14 +1582,14 @@ function LevelingTable({ rows, editing, onChange }) {
     </div>
   );
 }
-
+ 
 // =============================================================
 // Positioning Hex Grid
 // =============================================================
 function PositioningEditor({ positioning, champions, editing, onChange }) {
   const grid = positioning.grid || emptyGrid();
   const [pickerCell, setPickerCell] = useState(null); // {r,c}
-
+ 
   // Map champion name -> full champ object so the hex tiles can show portraits.
   const byName = useMemo(() => {
     const m = {};
@@ -1204,7 +1598,7 @@ function PositioningEditor({ positioning, champions, editing, onChange }) {
     });
     return m;
   }, [champions]);
-
+ 
   function setCell(r, c, name) {
     const next = grid.map((row, ri) =>
       row.map((cell, ci) => (ri === r && ci === c ? name : cell))
@@ -1212,7 +1606,7 @@ function PositioningEditor({ positioning, champions, editing, onChange }) {
     onChange({ ...positioning, grid: next });
     setPickerCell(null);
   }
-
+ 
   return (
     <div>
       <div style={styles.boardWrap}>
@@ -1247,7 +1641,7 @@ function PositioningEditor({ positioning, champions, editing, onChange }) {
         </div>
         <div style={styles.boardLabel}>↓ BACKLINE — your side</div>
       </div>
-
+ 
       {pickerCell && (
         <div style={styles.picker}>
           <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 8, letterSpacing: 1 }}>
@@ -1285,7 +1679,7 @@ function PositioningEditor({ positioning, champions, editing, onChange }) {
           </div>
         </div>
       )}
-
+ 
       <div style={{ marginTop: 16 }}>
         <div style={styles.notesLabel}>POSITIONING NOTES</div>
         {editing ? (
@@ -1303,7 +1697,7 @@ function PositioningEditor({ positioning, champions, editing, onChange }) {
     </div>
   );
 }
-
+ 
 function Hex({ champion, champData, editing, onClick }) {
   const filled = !!champion;
   const cost = champData ? COST_COLORS[champData.cost] || COST_COLORS[1] : null;
@@ -1347,7 +1741,7 @@ function Hex({ champion, champData, editing, onClick }) {
     </button>
   );
 }
-
+ 
 // =============================================================
 // Background atmosphere
 // =============================================================
@@ -1360,14 +1754,14 @@ function BgEffects() {
     </>
   );
 }
-
+ 
 // =============================================================
 // Styles
 // =============================================================
 const fontDisplay = `'Orbitron', 'Bebas Neue', system-ui, sans-serif`;
 const fontBody = `'DM Sans', 'Helvetica Neue', sans-serif`;
 const fontMono = `'JetBrains Mono', 'IBM Plex Mono', monospace`;
-
+ 
 const styles = {
   shell: {
     position: "relative",
@@ -2011,10 +2405,10 @@ const styles = {
     boxShadow: "0 0 16px rgba(251,191,36,0.3)",
   },
 };
-
+ 
 // (Fonts loaded via <link> tag in HTML head)
-
-
+ 
+ 
 // Boot the app
 const _root = ReactDOM.createRoot(document.getElementById("root"));
 _root.render(<TFTCodex />);
