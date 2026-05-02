@@ -696,6 +696,128 @@ const CHAMPION_IDS = {
   "Vex": 711, "Viktor": 112, "Xayah": 498, "Zed": 238, "Zoe": 142,
 };
  
+const CHAMPIONS_DATA = {
+  "Aatrox": { id: 266, ddName: "Aatrox", cost: 1, traits: ["Brawler", "Doomer"], role: "Tank" },
+  "Caitlyn": { id: 51, ddName: "Caitlyn", cost: 1, traits: ["N.O.V.A.", "Sniper"], role: "Sniper" },
+  "Cho'Gath": { id: 31, ddName: "Chogath", cost: 1, traits: ["Brawler", "Primordian"], role: "Tank" },
+  "Ezreal": { id: 81, ddName: "Ezreal", cost: 1, traits: ["Galaxy Hunter", "Sniper"], role: "Carry" },
+  "Leona": { id: 89, ddName: "Leona", cost: 1, traits: ["Anima", "Bastion"], role: "Tank" },
+  "Lissandra": { id: 127, ddName: "Lissandra", cost: 1, traits: ["Dark Star", "Psionic"], role: "Utility" },
+  "Nasus": { id: 75, ddName: "Nasus", cost: 1, traits: ["Primordian", "Bastion"], role: "Tank" },
+  "Poppy": { id: 78, ddName: "Poppy", cost: 1, traits: ["Meeple", "Bastion"], role: "Tank" },
+  "Rek'Sai": { id: 421, ddName: "RekSai", cost: 1, traits: ["Primordian", "Voyager"], role: "Bruiser" },
+  "Teemo": { id: 17, ddName: "Teemo", cost: 1, traits: ["Galaxy Hunter", "Anima"], role: "Carry" },
+  "Twisted Fate": { id: 4, ddName: "TwistedFate", cost: 1, traits: ["Fateweaver", "Galaxy Hunter"], role: "Carry" },
+  "Veigar": { id: 45, ddName: "Veigar", cost: 1, traits: ["Meeple", "Replicator"], role: "AP Carry" },
+  "Bel'Veth": { id: 200, ddName: "Belveth", cost: 2, traits: ["Primordian", "Voyager", "Eradicator"], role: "Bruiser" },
+  "Briar": { id: 233, ddName: "Briar", cost: 2, traits: ["Primordian", "Brawler"], role: "Bruiser" },
+  "Gnar": { id: 150, ddName: "Gnar", cost: 2, traits: ["Meeple", "Brawler"], role: "Tank" },
+  "Gragas": { id: 79, ddName: "Gragas", cost: 2, traits: ["Brawler", "Party Animal"], role: "Tank" },
+  "Jax": { id: 24, ddName: "Jax", cost: 2, traits: ["Brawler", "Galaxy Hunter"], role: "Bruiser" },
+  "Mordekaiser": { id: 82, ddName: "Mordekaiser", cost: 2, traits: ["Doomer", "Brawler"], role: "Bruiser" },
+  "Nunu": { id: 20, ddName: "Nunu", cost: 2, traits: ["Anima", "Voyager"], role: "Tank" },
+  "Pantheon": { id: 80, ddName: "Pantheon", cost: 2, traits: ["Stargazer", "Bastion"], role: "Tank" },
+  "Pyke": { id: 555, ddName: "Pyke", cost: 2, traits: ["Rogue", "Anima"], role: "Assassin" },
+  "Zoe": { id: 142, ddName: "Zoe", cost: 2, traits: ["Stargazer", "Anima"], role: "Utility" },
+  "Aurora": { id: 893, ddName: "Aurora", cost: 3, traits: ["Psionic", "Conduit", "Stargazer"], role: "Utility" },
+  "Diana": { id: 131, ddName: "Diana", cost: 3, traits: ["Stargazer", "Anima"], role: "Bruiser" },
+  "Fizz": { id: 105, ddName: "Fizz", cost: 3, traits: ["Meeple", "Rogue"], role: "Assassin" },
+  "Gwen": { id: 887, ddName: "Gwen", cost: 3, traits: ["Doomer", "Galaxy Hunter"], role: "Bruiser" },
+  "Illaoi": { id: 420, ddName: "Illaoi", cost: 3, traits: ["Brawler", "Primordian"], role: "Tank" },
+  "Jinx": { id: 222, ddName: "Jinx", cost: 3, traits: ["Galaxy Hunter", "Sniper"], role: "Carry" },
+  "Kai'Sa": { id: 145, ddName: "Kaisa", cost: 3, traits: ["N.O.V.A.", "Voyager"], role: "Carry" },
+  "Lulu": { id: 117, ddName: "Lulu", cost: 3, traits: ["Conduit", "Stargazer"], role: "Utility" },
+  "Maokai": { id: 57, ddName: "Maokai", cost: 3, traits: ["Bulwark", "Primordian"], role: "Tank" },
+  "Sona": { id: 37, ddName: "Sona", cost: 3, traits: ["Conduit", "Redeemer"], role: "Support" },
+  "Talon": { id: 91, ddName: "Talon", cost: 3, traits: ["Rogue", "Galaxy Hunter"], role: "Assassin" },
+  "Urgot": { id: 6, ddName: "Urgot", cost: 3, traits: ["Mecha", "Brawler"], role: "Tank-Carry" },
+  "Viktor": { id: 112, ddName: "Viktor", cost: 3, traits: ["Mecha", "Psionic"], role: "Utility" },
+  "Xayah": { id: 498, ddName: "Xayah", cost: 4, traits: ["Stargazer", "Sniper"], role: "Carry" },
+  "Akali": { id: 84, ddName: "Akali", cost: 4, traits: ["Rogue", "N.O.V.A."], role: "Assassin" },
+  "Aurelion Sol": { id: 136, ddName: "AurelionSol", cost: 4, traits: ["Dark Star", "Mecha"], role: "AP Carry" },
+  "Corki": { id: 42, ddName: "Corki", cost: 4, traits: ["Meeple", "Sniper"], role: "Carry" },
+  "Karma": { id: 43, ddName: "Karma", cost: 4, traits: ["Vanguard", "Redeemer"], role: "Tank-DPS" },
+  "Kindred": { id: 203, ddName: "Kindred", cost: 4, traits: ["Anima", "Galaxy Hunter"], role: "Carry" },
+  "LeBlanc": { id: 7, ddName: "Leblanc", cost: 4, traits: ["Rogue", "Dark Lady", "Stargazer"], role: "AP Carry" },
+  "Master Yi": { id: 11, ddName: "MasterYi", cost: 4, traits: ["Eradicator", "Brawler"], role: "Carry" },
+  "Miss Fortune": { id: 21, ddName: "MissFortune", cost: 4, traits: ["Gun Goddess"], role: "Carry" },
+  "Ornn": { id: 516, ddName: "Ornn", cost: 4, traits: ["Bulwark", "Forge"], role: "Tank-Forge" },
+  "Rammus": { id: 33, ddName: "Rammus", cost: 4, traits: ["Meeple", "Bastion"], role: "Tank" },
+  "Riven": { id: 92, ddName: "Riven", cost: 4, traits: ["Vanguard", "Space Groove"], role: "Bruiser" },
+  "Samira": { id: 360, ddName: "Samira", cost: 4, traits: ["Space Groove", "Galaxy Hunter"], role: "Carry" },
+  "Tahm Kench": { id: 223, ddName: "TahmKench", cost: 4, traits: ["Bulwark", "Party Animal"], role: "Tank" },
+  "The Mighty Mech": { id: null, ddName: null, cost: 4, traits: ["Mecha"], role: "Tank" },
+  "Bard": { id: 432, ddName: "Bard", cost: 5, traits: ["Conduit", "Oracle"], role: "Support" },
+  "Fiora": { id: 114, ddName: "Fiora", cost: 5, traits: ["Divine Duelist"], role: "Carry" },
+  "Graves": { id: 104, ddName: "Graves", cost: 5, traits: ["Galaxy Hunter", "Sniper"], role: "Carry" },
+  "Jhin": { id: 202, ddName: "Jhin", cost: 5, traits: ["Dark Star", "Sniper", "Eradicator"], role: "Carry" },
+  "Morgana": { id: 25, ddName: "Morgana", cost: 5, traits: ["Dark Lady", "Redeemer"], role: "Support" },
+  "Shen": { id: 98, ddName: "Shen", cost: 5, traits: ["Bastion", "Vanguard"], role: "Tank" },
+  "Vex": { id: 711, ddName: "Vex", cost: 5, traits: ["Dark Lady", "Psionic"], role: "AP Carry" },
+  "Zed": { id: 238, ddName: "Zed", cost: 5, traits: ["Rogue", "Anima"], role: "Assassin" },
+};
+ 
+const ITEMS_DATA = {
+  // ===== Components =====
+  "B.F. Sword":         { type: "component", iconType: "ad",      stat: "+15 Attack Damage" },
+  "Recurve Bow":        { type: "component", iconType: "as",      stat: "+10% Attack Speed" },
+  "Needlessly Large Rod": { type: "component", iconType: "ap",    stat: "+10 Ability Power" },
+  "Tear of the Goddess": { type: "component", iconType: "mana",   stat: "+15 Starting Mana" },
+  "Chain Vest":         { type: "component", iconType: "armor",   stat: "+20 Armor" },
+  "Negatron Cloak":     { type: "component", iconType: "mr",      stat: "+20 Magic Resist" },
+  "Giant's Belt":       { type: "component", iconType: "hp",      stat: "+150 Health" },
+  "Sparring Gloves":    { type: "component", iconType: "crit",    stat: "+10% Crit Chance, +10% Dodge" },
+  "Spatula":            { type: "component", iconType: "spatula", stat: "It's a spatula. Use for emblems." },
+ 
+  // ===== Completed AD items =====
+  "Bloodthirster":      { type: "completed", iconType: "ad-mr",   recipe: ["B.F. Sword", "Negatron Cloak"], stat: "Heals for 25% of damage dealt. Shield at 40% HP." },
+  "Infinity Edge":      { type: "completed", iconType: "ad-crit", recipe: ["B.F. Sword", "Sparring Gloves"], stat: "+15% Crit Chance, +10% Crit Damage. Crits do +35% damage." },
+  "Last Whisper":       { type: "completed", iconType: "as-crit", recipe: ["Recurve Bow", "Sparring Gloves"], stat: "Crits shred target's armor by 30% for 5s." },
+  "Giant Slayer":       { type: "completed", iconType: "ad-hp",   recipe: ["B.F. Sword", "Giant's Belt"], stat: "+25% damage to enemies above 1800 HP." },
+  "Sterak's Gage":      { type: "completed", iconType: "ad-hp",   recipe: ["B.F. Sword", "Giant's Belt"], stat: "Below 60% HP: gain a shield + 35% AD." },
+  "Hand of Justice":    { type: "completed", iconType: "ad-mana", recipe: ["B.F. Sword", "Tear of the Goddess"], stat: "+15 AD/AP and 15% Omnivamp OR +40 AD/AP." },
+  "Edge of Night":      { type: "completed", iconType: "ad-armor", recipe: ["B.F. Sword", "Chain Vest"], stat: "Below 50% HP: untargetable for 1.5s. +30% AS." },
+  "Titan's Resolve":    { type: "completed", iconType: "as-armor", recipe: ["Recurve Bow", "Chain Vest"], stat: "Stack +1% AD/AP per attack/hit. Max 25 stacks." },
+  "Quicksilver":        { type: "completed", iconType: "as-crit", recipe: ["Sparring Gloves", "Recurve Bow"], stat: "Immune to CC for 14s. +25% AS." },
+  "Guinsoo's Rageblade": { type: "completed", iconType: "as-ap",  recipe: ["Recurve Bow", "Needlessly Large Rod"], stat: "+5% AS per attack, stacks indefinitely." },
+  "Runaan's Hurricane": { type: "completed", iconType: "as-mr",   recipe: ["Recurve Bow", "Negatron Cloak"], stat: "Attacks fire bolts at extra targets." },
+  "Red Buff":           { type: "completed", iconType: "as-hp",   recipe: ["Recurve Bow", "Giant's Belt"], stat: "Attacks burn (1% max HP/s) and apply 33% Wound." },
+  "Statikk Shiv":       { type: "completed", iconType: "as-mana", recipe: ["Recurve Bow", "Tear of the Goddess"], stat: "Every 3rd attack zaps 4 enemies, drains mana." },
+ 
+  // ===== Completed AP items =====
+  "Rabadon's Deathcap": { type: "completed", iconType: "ap-ap",   recipe: ["Needlessly Large Rod", "Needlessly Large Rod"], stat: "+50 AP." },
+  "Jeweled Gauntlet":   { type: "completed", iconType: "ap-crit", recipe: ["Needlessly Large Rod", "Sparring Gloves"], stat: "Abilities can crit. +20% Crit Chance." },
+  "Spear of Shojin":    { type: "completed", iconType: "ap-mana", recipe: ["Needlessly Large Rod", "Tear of the Goddess"], stat: "Attacks restore 5 mana." },
+  "Blue Buff":          { type: "completed", iconType: "mana-mana", recipe: ["Tear of the Goddess", "Tear of the Goddess"], stat: "After casting, set mana to 20. +10% damage amp." },
+  "Morellonomicon":     { type: "completed", iconType: "ap-hp",   recipe: ["Needlessly Large Rod", "Giant's Belt"], stat: "Abilities burn target (1% max HP/s) and 33% Wound." },
+  "Nashor's Tooth":     { type: "completed", iconType: "as-ap",   recipe: ["Recurve Bow", "Needlessly Large Rod"], stat: "+60% AS for 5s after cast." },
+ 
+  // ===== Tank items =====
+  "Warmog's Armor":     { type: "completed", iconType: "hp-hp",   recipe: ["Giant's Belt", "Giant's Belt"], stat: "Regenerate 1% max HP per second." },
+  "Gargoyle Stoneplate": { type: "completed", iconType: "armor-mr", recipe: ["Chain Vest", "Negatron Cloak"], stat: "Gain 6 Armor + 6 MR per enemy targeting holder." },
+  "Dragon's Claw":      { type: "completed", iconType: "mr-mr",   recipe: ["Negatron Cloak", "Negatron Cloak"], stat: "+50% Magic Resist. Reflect 6% magic damage." },
+  "Bramble Vest":       { type: "completed", iconType: "armor-armor", recipe: ["Chain Vest", "Chain Vest"], stat: "Negate bonus crit damage. Reflect AOE on hit." },
+  "Sunfire Cape":       { type: "completed", iconType: "armor-hp", recipe: ["Chain Vest", "Giant's Belt"], stat: "Burn closest enemy 1% max HP/s. Apply 33% Wound." },
+  "Redemption":         { type: "completed", iconType: "hp-mana", recipe: ["Giant's Belt", "Tear of the Goddess"], stat: "Heal allies for 12% missing HP every 5s." },
+  "Adaptive Helm":      { type: "completed", iconType: "mr-mana", recipe: ["Negatron Cloak", "Tear of the Goddess"], stat: "Front: +20 Armor/MR. Back: +20 AP, +5 mana/s." },
+  "Ionic Spark":        { type: "completed", iconType: "mr-ap",   recipe: ["Negatron Cloak", "Needlessly Large Rod"], stat: "Enemies within 2 hexes have -50% MR." },
+ 
+  // ===== Other notable items =====
+  "Mortal Reminder":    { type: "completed", iconType: "as-crit", recipe: ["Recurve Bow", "Sparring Gloves"], stat: "Anti-heal variant of Last Whisper (33% wound)." },
+  "Hextech Gunblade":   { type: "completed", iconType: "ad-ap",   recipe: ["B.F. Sword", "Needlessly Large Rod"], stat: "All damage heals lowest % HP ally." },
+  "Anima Visage":       { type: "artifact",  iconType: "hp-mr",   stat: "Heals 4% max HP/s while above 60% HP. (Ornn forge)" },
+  "Rocket-Propelled Fist": { type: "artifact", iconType: "ad-hp", stat: "Knock farthest enemy to opposite side. (Ornn forge)" },
+};
+ 
+// Item categories for the library view
+const ITEM_CATEGORIES = [
+  { id: "component", label: "Components", desc: "Basic items combined to make completed items." },
+  { id: "completed", label: "Completed Items", desc: "Two components combined." },
+  { id: "artifact",  label: "Forge Artifacts", desc: "Special items from Ornn's forge." },
+];
+ 
+ 
+ 
 // ---- helpers ----
 const STORAGE_KEY = "tft:codex:comps:v2";        // current (frontline-top)
 const STORAGE_KEY_V1 = "tft:codex:comps:v1";    // legacy (frontline-bottom)
@@ -707,19 +829,34 @@ function champSlug(name) {
   return name.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
  
-// Build the default portrait URL from a champion name.
-// Prefers Community Dragon's numeric-ID endpoint (most reliable), falls back
-// to the slug-based path for TFT-only units (Meepsie, The Mighty Mech, etc).
-// Final fallback is the initials badge inside ChampPortrait.
-function defaultChampImage(name) {
-  if (!name) return "";
-  const id = CHAMPION_IDS[name];
+// Returns a list of URL candidates for the champion portrait, in priority order.
+// The portrait component will fall through this list on each onError.
+function champImageURLs(name) {
+  if (!name) return [];
+  const data = CHAMPIONS_DATA[name];
+  const id = data?.id ?? CHAMPION_IDS[name];
+  const ddName = data?.ddName;
+  const urls = [];
   if (id) {
-    return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${id}.png`;
+    // Community Dragon numeric-ID endpoint (canonical Riot path)
+    urls.push(`https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${id}.png`);
   }
+  if (ddName) {
+    // DataDragon official Riot CDN (very reliable, version-pinned)
+    urls.push(`https://ddragon.leagueoflegends.com/cdn/15.20.1/img/champion/${ddName}.png`);
+  }
+  // Last-ditch slug-based path (works for some TFT-exclusive units)
   const slug = champSlug(name);
-  if (!slug) return "";
-  return `https://raw.communitydragon.org/latest/game/assets/characters/${slug}/hud/${slug}_square.png`;
+  if (slug) {
+    urls.push(`https://raw.communitydragon.org/latest/game/assets/characters/${slug}/hud/${slug}_square.png`);
+  }
+  return urls;
+}
+ 
+// Single-URL helper kept for the existing call site.
+function defaultChampImage(name) {
+  const urls = champImageURLs(name);
+  return urls[0] || "";
 }
  
 function getChampImageURL(champ) {
@@ -730,10 +867,17 @@ function getChampImageURL(champ) {
  
 // Reusable portrait component with image + initials fallback
 function ChampPortrait({ champ, size = 48, square = false }) {
-  const [failed, setFailed] = useState(false);
+  // Try each URL in turn; advance the index on every failure.
+  const [urlIdx, setUrlIdx] = useState(0);
   if (!champ) return null;
   const cost = COST_COLORS[champ.cost] || COST_COLORS[1];
-  const url = getChampImageURL(champ);
+ 
+  // Build candidate list: explicit override first, then auto-discovered URLs
+  const urls = champ.image && champ.image.trim()
+    ? [champ.image.trim(), ...champImageURLs(champ.name)]
+    : champImageURLs(champ.name);
+  const url = urls[urlIdx];
+ 
   const initials = (champ.name || "?")
     .split(/[\s'\-.&]+/)
     .filter(Boolean)
@@ -754,7 +898,7 @@ function ChampPortrait({ champ, size = 48, square = false }) {
     display: "block",
   };
  
-  if (failed || !url) {
+  if (!url) {
     return (
       <div
         style={{
@@ -767,6 +911,7 @@ function ChampPortrait({ champ, size = 48, square = false }) {
           color: cost.text,
           letterSpacing: 0.5,
         }}
+        title={champ.name}
       >
         {initials}
       </div>
@@ -777,7 +922,8 @@ function ChampPortrait({ champ, size = 48, square = false }) {
     <img
       src={url}
       alt={champ.name}
-      onError={() => setFailed(true)}
+      title={champ.name}
+      onError={() => setUrlIdx((i) => i + 1)}
       style={baseStyle}
       loading="lazy"
     />
@@ -818,6 +964,7 @@ function TFTCodex() {
   const [search, setSearch] = useState("");
   const [loadState, setLoadState] = useState("loading"); // loading | ready
   const [tierFilter, setTierFilter] = useState("ALL");
+  const [appView, setAppView] = useState("comps");
  
   // Load from persistent storage on mount
   useEffect(() => {
@@ -959,44 +1106,64 @@ function TFTCodex() {
     <div style={styles.shell}>
       <BgEffects />
       <Topbar
+        view={appView}
+        setView={setAppView}
         onNew={createNew}
         onExport={exportJSON}
         onImport={importJSON}
         onReset={resetSeeds}
       />
-      <div style={styles.body}>
-        <Sidebar
-          comps={filtered}
-          allCount={comps.length}
-          selectedId={selected?.id}
-          onSelect={(id) => {
-            if (editing) return;
-            setSelectedId(id);
-          }}
-          search={search}
-          setSearch={setSearch}
-          tierFilter={tierFilter}
-          setTierFilter={setTierFilter}
-          onNew={createNew}
-        />
-        <main style={styles.main}>
-          {view ? (
-            <CompView
-              comp={view}
-              editing={editing}
-              onChange={setDraft}
-              onEdit={startEdit}
-              onCancel={cancelEdit}
-              onSave={saveEdit}
-              onDuplicate={duplicateCurrent}
-              onDelete={deleteCurrent}
-              canDelete={comps.length > 1}
-            />
-          ) : (
-            <div style={{ padding: 40 }}>No comp selected.</div>
-          )}
-        </main>
-      </div>
+      {appView === "comps" && (
+        <div style={styles.body}>
+          <Sidebar
+            comps={filtered}
+            allCount={comps.length}
+            selectedId={selected?.id}
+            onSelect={(id) => {
+              if (editing) return;
+              setSelectedId(id);
+            }}
+            search={search}
+            setSearch={setSearch}
+            tierFilter={tierFilter}
+            setTierFilter={setTierFilter}
+            onNew={createNew}
+          />
+          <main style={styles.main}>
+            {view ? (
+              <CompView
+                comp={view}
+                editing={editing}
+                onChange={setDraft}
+                onEdit={startEdit}
+                onCancel={cancelEdit}
+                onSave={saveEdit}
+                onDuplicate={duplicateCurrent}
+                onDelete={deleteCurrent}
+                canDelete={comps.length > 1}
+              />
+            ) : (
+              <div style={{ padding: 40 }}>No comp selected.</div>
+            )}
+          </main>
+        </div>
+      )}
+      {appView === "champions" && (
+        <div style={{ overflowY: "auto", height: "calc(100vh - 73px)" }}>
+          <ChampionLibrary
+            comps={comps}
+            onJump={(compId) => {
+              setSelectedId(compId);
+              setAppView("comps");
+            }}
+          />
+        </div>
+      )}
+      {appView === "items" && (
+        <div style={{ overflowY: "auto", height: "calc(100vh - 73px)" }}>
+          <ItemLibrary comps={comps} />
+        </div>
+      )}
     </div>
   );
 }
@@ -1004,8 +1171,13 @@ function TFTCodex() {
 // =============================================================
 // Top bar
 // =============================================================
-function Topbar({ onNew, onExport, onImport, onReset }) {
+function Topbar({ view, setView, onNew, onExport, onImport, onReset }) {
   const fileInputRef = React.useRef(null);
+  const tabs = [
+    { id: "comps", label: "Comps", icon: <Icon name="book-open" size={13} /> },
+    { id: "champions", label: "Champions", icon: <Icon name="crown" size={13} /> },
+    { id: "items", label: "Items", icon: <Icon name="swords" size={13} /> },
+  ];
   return (
     <header style={styles.topbar}>
       <div style={styles.brand}>
@@ -1017,36 +1189,69 @@ function Topbar({ onNew, onExport, onImport, onReset }) {
           <div style={styles.brandSub}>Set 17 · Space Gods · personal playbook</div>
         </div>
       </div>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <button style={styles.topBtnGhost} onClick={onReset} title="Restore default seed comps">
-          <Icon name="sparkles" size={14} /> reset seeds
-        </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="application/json,.json"
-          style={{ display: "none" }}
-          onChange={async (e) => {
-            const file = e.target.files && e.target.files[0];
-            if (!file) return;
-            try {
-              const text = await file.text();
-              onImport(JSON.parse(text));
-            } catch (err) {
-              alert("Could not read that JSON file.");
-            }
-            e.target.value = "";
-          }}
-        />
-        <button style={styles.topBtnGhost} onClick={() => fileInputRef.current && fileInputRef.current.click()}>
-          <Icon name="upload" size={14} /> import
-        </button>
-        <button style={styles.topBtnGhost} onClick={onExport}>
-          <Icon name="download" size={14} /> export
-        </button>
-        <button style={styles.topBtnPrimary} onClick={onNew}>
-          <Icon name="plus" size={14} /> new comp
-        </button>
+      {/* Center: view tabs */}
+      <div style={{ display: "flex", gap: 4, background: "rgba(15,23,42,0.5)", padding: 4, borderRadius: 8, border: "1px solid rgba(71,85,105,0.3)" }}>
+        {tabs.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setView(t.id)}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "7px 14px",
+              background: view === t.id ? "linear-gradient(135deg, rgba(168,85,247,0.3), rgba(59,130,246,0.2))" : "transparent",
+              color: view === t.id ? "#fbbf24" : "#94a3b8",
+              border: view === t.id ? "1px solid rgba(192,132,252,0.5)" : "1px solid transparent",
+              borderRadius: 5,
+              fontSize: 11.5,
+              fontFamily: fontDisplay,
+              fontWeight: 700,
+              letterSpacing: 1.5,
+              cursor: "pointer",
+              textTransform: "uppercase",
+            }}
+          >
+            {t.icon}
+            {t.label}
+          </button>
+        ))}
+      </div>
+      {/* Right: actions (only relevant on comps view) */}
+      <div style={{ display: "flex", gap: 8 }}>
+        {view === "comps" && (
+          <>
+            <button style={styles.topBtnGhost} onClick={onReset} title="Restore default seed comps">
+              <Icon name="sparkles" size={14} /> reset seeds
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/json,.json"
+              style={{ display: "none" }}
+              onChange={async (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                try {
+                  const text = await file.text();
+                  onImport(JSON.parse(text));
+                } catch (err) {
+                  alert("Could not read that JSON file.");
+                }
+                e.target.value = "";
+              }}
+            />
+            <button style={styles.topBtnGhost} onClick={() => fileInputRef.current && fileInputRef.current.click()}>
+              <Icon name="upload" size={14} /> import
+            </button>
+            <button style={styles.topBtnGhost} onClick={onExport}>
+              <Icon name="download" size={14} /> export
+            </button>
+            <button style={styles.topBtnPrimary} onClick={onNew}>
+              <Icon name="plus" size={14} /> new comp
+            </button>
+          </>
+        )}
       </div>
     </header>
   );
@@ -1491,15 +1696,11 @@ function ChampCard({ champ, editing, onChange, onRemove }) {
           {champ.role && <div style={styles.champRole}>{champ.role}</div>}
           {champ.traits && <div style={styles.champTraits}>{champ.traits}</div>}
           {champ.items && (
-            <div style={styles.itemPills}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 6 }}>
               {champ.items.split(",").map((it, i) => {
                 const t = it.trim();
-                if (!t) return null;
-                return (
-                  <span key={i} style={styles.itemPill}>
-                    {t}
-                  </span>
-                );
+                if (!t || t === "—") return null;
+                return <ItemIcon key={i} name={t} size={26} />;
               })}
             </div>
           )}
@@ -1752,6 +1953,534 @@ function BgEffects() {
       <div style={styles.bgStars} />
       <div style={styles.bgNebula} />
     </>
+  );
+}
+ 
+ 
+// =============================================================
+// Item Icon — purely SVG-based, no external image dependencies
+// =============================================================
+const ITEM_ICON_COLORS = {
+  ad:    { bg: "#7c2d12", glow: "#fb923c", accent: "#fed7aa" },  // orange-red (sword)
+  as:    { bg: "#7c2d12", glow: "#facc15", accent: "#fef08a" },  // yellow-orange (bow)
+  ap:    { bg: "#581c87", glow: "#c084fc", accent: "#e9d5ff" },  // purple (rod)
+  mana:  { bg: "#0c4a6e", glow: "#38bdf8", accent: "#bae6fd" },  // cyan (tear)
+  armor: { bg: "#1e3a8a", glow: "#60a5fa", accent: "#dbeafe" },  // blue (vest)
+  mr:    { bg: "#365314", glow: "#86efac", accent: "#dcfce7" },  // green (cloak)
+  hp:    { bg: "#7f1d1d", glow: "#f87171", accent: "#fecaca" },  // red (belt)
+  crit:  { bg: "#831843", glow: "#f472b6", accent: "#fbcfe8" },  // pink (gloves)
+  spatula: { bg: "#3f3f46", glow: "#a1a1aa", accent: "#e4e4e7" }, // gray (spatula)
+};
+ 
+// Map iconType (e.g. "ad-mr") to a left/right pair
+function pairFromIconType(iconType) {
+  if (!iconType) return ["ad"];
+  const parts = iconType.split("-");
+  return parts.length === 1 ? [parts[0]] : [parts[0], parts[1]];
+}
+ 
+function ItemGlyph({ kind, size = 14 }) {
+  // Tiny glyph that represents the component type
+  const c = ITEM_ICON_COLORS[kind]?.accent || "#fff";
+  const s = size;
+  const sw = Math.max(1.4, size / 9);
+  switch (kind) {
+    case "ad": // sword
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+          <line x1="6" y1="18" x2="18" y2="6" />
+          <line x1="6" y1="18" x2="3" y2="21" />
+          <line x1="14" y1="4" x2="20" y2="10" />
+        </svg>
+      );
+    case "as": // bow
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 21 C 14 18 19 13 21 4" />
+          <line x1="5" y1="21" x2="21" y2="4" />
+        </svg>
+      );
+    case "ap": // sparkle/rod
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill={c} stroke="none">
+          <path d="M12 2 L13.5 9 L21 10.5 L13.5 12 L12 19 L10.5 12 L3 10.5 L10.5 9 Z" />
+        </svg>
+      );
+    case "mana": // droplet
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill={c} stroke="none">
+          <path d="M12 2 C 8 8 5 12 5 15 A 7 7 0 0 0 19 15 C 19 12 16 8 12 2 Z" />
+        </svg>
+      );
+    case "armor": // shield
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill={c} stroke="none">
+          <path d="M12 2 L20 5 V12 C 20 17 16 21 12 22 C 8 21 4 17 4 12 V5 Z" />
+        </svg>
+      );
+    case "mr": // diamond / cloak
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill={c} stroke="none">
+          <path d="M12 2 L21 12 L12 22 L3 12 Z" />
+        </svg>
+      );
+    case "hp": // heart
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill={c} stroke="none">
+          <path d="M12 21 C 5 15 2 12 2 8 A 5 5 0 0 1 12 6 A 5 5 0 0 1 22 8 C 22 12 19 15 12 21 Z" />
+        </svg>
+      );
+    case "crit": // diamond crit
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth={sw} strokeLinejoin="round">
+          <path d="M12 2 L21 12 L12 22 L3 12 Z" />
+          <circle cx="12" cy="12" r="2" fill={c} />
+        </svg>
+      );
+    case "spatula": // spatula handle
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill={c} stroke="none">
+          <rect x="6" y="3" width="12" height="9" rx="2" />
+          <rect x="11" y="12" width="2" height="9" rx="1" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+ 
+function ItemIcon({ name, size = 32, showLabel = false, onClick = null }) {
+  const data = ITEMS_DATA[name];
+  // Unknown items render as plain styled pill
+  if (!data) {
+    return (
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 4,
+          padding: "3px 7px",
+          background: "rgba(255,255,255,0.05)",
+          border: "1px solid rgba(255,255,255,0.1)",
+          borderRadius: 4,
+          fontSize: 10.5,
+          color: "#cbd5e1",
+          fontFamily: fontMono,
+        }}
+        title={name}
+      >
+        {name}
+      </span>
+    );
+  }
+  const [k1, k2] = pairFromIconType(data.iconType);
+  const c1 = ITEM_ICON_COLORS[k1] || ITEM_ICON_COLORS.ad;
+  const c2 = k2 ? ITEM_ICON_COLORS[k2] || c1 : c1;
+  const halfSize = size;
+ 
+  const tile = (
+    <div
+      onClick={onClick}
+      title={`${name}: ${data.stat || ""}`}
+      style={{
+        width: halfSize,
+        height: halfSize,
+        borderRadius: 6,
+        position: "relative",
+        overflow: "hidden",
+        flexShrink: 0,
+        cursor: onClick ? "pointer" : "default",
+        background: `linear-gradient(135deg, ${c1.bg} 0%, ${c1.bg} 50%, ${c2.bg} 50%, ${c2.bg} 100%)`,
+        border: `1px solid ${c1.glow}`,
+        boxShadow: `0 0 8px ${c1.glow}55`,
+        display: "grid",
+        placeItems: "center",
+      }}
+    >
+      {/* Diagonal divider sheen */}
+      <div style={{
+        position: "absolute",
+        top: 0, left: 0, right: 0, bottom: 0,
+        background: "linear-gradient(135deg, transparent 49%, rgba(255,255,255,0.18) 50%, transparent 51%)",
+        pointerEvents: "none",
+      }} />
+      <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 1 }}>
+        <ItemGlyph kind={k1} size={Math.max(11, size * 0.42)} />
+        {k2 && k2 !== k1 && <ItemGlyph kind={k2} size={Math.max(11, size * 0.42)} />}
+      </div>
+    </div>
+  );
+ 
+  if (!showLabel) return tile;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+      {tile}
+      <span style={{ fontSize: 11, color: "#cbd5e1" }}>{name}</span>
+    </div>
+  );
+}
+ 
+// =============================================================
+// Champion Library View
+// =============================================================
+function ChampionLibrary({ comps, onJump }) {
+  const [costFilter, setCostFilter] = useState("ALL");
+  const [traitFilter, setTraitFilter] = useState("ALL");
+  const [search, setSearch] = useState("");
+ 
+  // Derive trait list from data
+  const allTraits = useMemo(() => {
+    const set = new Set();
+    Object.values(CHAMPIONS_DATA).forEach((c) => (c.traits || []).forEach((t) => set.add(t)));
+    return ["ALL", ...Array.from(set).sort()];
+  }, []);
+ 
+  const allChamps = useMemo(() => {
+    return Object.entries(CHAMPIONS_DATA)
+      .map(([name, data]) => ({ name, ...data }))
+      .sort((a, b) => a.cost - b.cost || a.name.localeCompare(b.name));
+  }, []);
+ 
+  // Map champion -> comps that use it
+  const compsByChamp = useMemo(() => {
+    const m = {};
+    comps.forEach((c) => {
+      (c.champions || []).forEach((ch) => {
+        if (!ch.name) return;
+        m[ch.name] = m[ch.name] || [];
+        if (!m[ch.name].some((x) => x.id === c.id)) m[ch.name].push({ id: c.id, name: c.name, tier: c.tier });
+      });
+    });
+    return m;
+  }, [comps]);
+ 
+  const filtered = allChamps.filter((c) => {
+    if (costFilter !== "ALL" && c.cost !== costFilter) return false;
+    if (traitFilter !== "ALL" && !(c.traits || []).includes(traitFilter)) return false;
+    if (search && !c.name.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+ 
+  const grouped = useMemo(() => {
+    const g = { 1: [], 2: [], 3: [], 4: [], 5: [] };
+    filtered.forEach((c) => g[c.cost]?.push(c));
+    return g;
+  }, [filtered]);
+ 
+  return (
+    <div style={{ padding: "24px 32px", maxWidth: 1300, margin: "0 auto" }}>
+      <div style={{ marginBottom: 22 }}>
+        <h1 style={{ fontFamily: fontDisplay, fontSize: 28, letterSpacing: 2, margin: 0, color: "#fafafa" }}>
+          CHAMPION LIBRARY
+        </h1>
+        <div style={{ color: "#94a3b8", fontSize: 13, marginTop: 4 }}>
+          {allChamps.length} champions in Set 17. Click any unit to see which comps use it.
+        </div>
+      </div>
+ 
+      {/* Filters */}
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 18, alignItems: "center" }}>
+        <div style={{ position: "relative" }}>
+          <input
+            placeholder="search champion…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{
+              padding: "8px 12px",
+              background: "rgba(15,23,42,0.6)",
+              border: "1px solid rgba(71,85,105,0.4)",
+              borderRadius: 6,
+              color: "#e5e7eb",
+              fontSize: 13,
+              outline: "none",
+              minWidth: 200,
+            }}
+          />
+        </div>
+        <div style={{ display: "flex", gap: 4 }}>
+          {["ALL", 1, 2, 3, 4, 5].map((c) => (
+            <button
+              key={c}
+              onClick={() => setCostFilter(c)}
+              style={{
+                padding: "7px 12px",
+                background: costFilter === c
+                  ? (c === "ALL" ? "rgba(168,85,247,0.25)" : (COST_COLORS[c]?.bg || "rgba(168,85,247,0.25)"))
+                  : "rgba(15,23,42,0.5)",
+                color: costFilter === c
+                  ? (c === "ALL" ? "#c084fc" : (COST_COLORS[c]?.text || "#c084fc"))
+                  : "#94a3b8",
+                border: `1px solid ${costFilter === c
+                  ? (c === "ALL" ? "rgba(168,85,247,0.5)" : (COST_COLORS[c]?.ring || "rgba(168,85,247,0.5)"))
+                  : "rgba(71,85,105,0.3)"}`,
+                borderRadius: 5,
+                fontSize: 11,
+                fontFamily: fontDisplay,
+                fontWeight: 700,
+                letterSpacing: 1,
+                cursor: "pointer",
+              }}
+            >
+              {c === "ALL" ? "ALL" : `${c}c`}
+            </button>
+          ))}
+        </div>
+        <select
+          value={traitFilter}
+          onChange={(e) => setTraitFilter(e.target.value)}
+          style={{
+            padding: "8px 12px",
+            background: "rgba(15,23,42,0.6)",
+            border: "1px solid rgba(71,85,105,0.4)",
+            borderRadius: 6,
+            color: "#e5e7eb",
+            fontSize: 12,
+            outline: "none",
+          }}
+        >
+          {allTraits.map((t) => (
+            <option key={t} value={t}>{t === "ALL" ? "All traits" : t}</option>
+          ))}
+        </select>
+        <div style={{ marginLeft: "auto", color: "#64748b", fontSize: 12 }}>
+          showing {filtered.length} of {allChamps.length}
+        </div>
+      </div>
+ 
+      {/* Grouped grid */}
+      {[1, 2, 3, 4, 5].map((cost) => {
+        const champs = grouped[cost];
+        if (!champs || champs.length === 0) return null;
+        const cc = COST_COLORS[cost];
+        return (
+          <div key={cost} style={{ marginBottom: 28 }}>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              marginBottom: 12,
+              paddingBottom: 6,
+              borderBottom: `1px solid ${cc.ring}40`,
+            }}>
+              <div style={{
+                fontFamily: fontDisplay,
+                fontSize: 13,
+                color: cc.text,
+                letterSpacing: 2,
+                fontWeight: 700,
+              }}>
+                {cost}-COST
+              </div>
+              <div style={{ color: "#64748b", fontSize: 11 }}>{champs.length} units</div>
+            </div>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr))",
+              gap: 12,
+            }}>
+              {champs.map((c) => {
+                const uses = compsByChamp[c.name] || [];
+                return (
+                  <div
+                    key={c.name}
+                    onClick={() => uses[0] && onJump(uses[0].id)}
+                    style={{
+                      background: `linear-gradient(180deg, ${cc.bg}, rgba(20,21,42,0.92))`,
+                      border: `1px solid ${cc.ring}60`,
+                      borderRadius: 10,
+                      padding: 12,
+                      cursor: uses.length ? "pointer" : "default",
+                      transition: "all .15s ease",
+                    }}
+                    onMouseEnter={(e) => uses.length && (e.currentTarget.style.borderColor = cc.ring)}
+                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = `${cc.ring}60`)}
+                  >
+                    <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                      <ChampPortrait champ={{ name: c.name, cost: c.cost }} size={48} square />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{
+                          fontFamily: fontDisplay,
+                          fontSize: 13,
+                          fontWeight: 700,
+                          color: cc.text,
+                          letterSpacing: 0.5,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}>{c.name}</div>
+                        <div style={{ fontSize: 10, color: "#fbbf24", marginTop: 2, letterSpacing: 1, textTransform: "uppercase" }}>
+                          {c.role}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ marginTop: 8, display: "flex", flexWrap: "wrap", gap: 4 }}>
+                      {(c.traits || []).map((t) => (
+                        <span key={t} style={{
+                          fontSize: 10,
+                          padding: "2px 6px",
+                          background: "rgba(255,255,255,0.06)",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          borderRadius: 3,
+                          color: "#cbd5e1",
+                        }}>{t}</span>
+                      ))}
+                    </div>
+                    {uses.length > 0 && (
+                      <div style={{
+                        marginTop: 8,
+                        paddingTop: 8,
+                        borderTop: "1px solid rgba(71,85,105,0.3)",
+                        fontSize: 10,
+                        color: "#a78bfa",
+                        letterSpacing: 0.5,
+                      }}>
+                        used in {uses.length} comp{uses.length === 1 ? "" : "s"} →
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+ 
+// =============================================================
+// Item Library View
+// =============================================================
+function ItemLibrary({ comps }) {
+  const [search, setSearch] = useState("");
+ 
+  // Map item -> list of comps that use it
+  const itemUsage = useMemo(() => {
+    const m = {};
+    comps.forEach((c) => {
+      (c.champions || []).forEach((ch) => {
+        if (!ch.items) return;
+        ch.items.split(",").forEach((it) => {
+          const t = it.trim();
+          if (!t || t === "—") return;
+          m[t] = m[t] || new Set();
+          m[t].add(c.name);
+        });
+      });
+    });
+    // convert sets to arrays
+    Object.keys(m).forEach((k) => (m[k] = Array.from(m[k])));
+    return m;
+  }, [comps]);
+ 
+  const grouped = useMemo(() => {
+    const g = {};
+    ITEM_CATEGORIES.forEach((cat) => (g[cat.id] = []));
+    Object.entries(ITEMS_DATA).forEach(([name, data]) => {
+      if (search && !name.toLowerCase().includes(search.toLowerCase())) return;
+      g[data.type]?.push({ name, ...data });
+    });
+    Object.values(g).forEach((arr) => arr.sort((a, b) => a.name.localeCompare(b.name)));
+    return g;
+  }, [search]);
+ 
+  return (
+    <div style={{ padding: "24px 32px", maxWidth: 1300, margin: "0 auto" }}>
+      <div style={{ marginBottom: 22 }}>
+        <h1 style={{ fontFamily: fontDisplay, fontSize: 28, letterSpacing: 2, margin: 0, color: "#fafafa" }}>
+          ITEM LIBRARY
+        </h1>
+        <div style={{ color: "#94a3b8", fontSize: 13, marginTop: 4 }}>
+          {Object.keys(ITEMS_DATA).length} items. Hover any item to see its effect.
+        </div>
+      </div>
+ 
+      <input
+        placeholder="search item…"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        style={{
+          padding: "8px 12px",
+          background: "rgba(15,23,42,0.6)",
+          border: "1px solid rgba(71,85,105,0.4)",
+          borderRadius: 6,
+          color: "#e5e7eb",
+          fontSize: 13,
+          outline: "none",
+          width: 280,
+          marginBottom: 22,
+        }}
+      />
+ 
+      {ITEM_CATEGORIES.map((cat) => {
+        const items = grouped[cat.id] || [];
+        if (items.length === 0) return null;
+        return (
+          <div key={cat.id} style={{ marginBottom: 32 }}>
+            <div style={{ marginBottom: 14 }}>
+              <div style={{
+                fontFamily: fontDisplay,
+                fontSize: 14,
+                color: "#fbbf24",
+                letterSpacing: 2,
+                fontWeight: 700,
+                textTransform: "uppercase",
+              }}>{cat.label}</div>
+              <div style={{ color: "#64748b", fontSize: 11.5, marginTop: 2 }}>{cat.desc}</div>
+            </div>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gap: 10,
+            }}>
+              {items.map((it) => {
+                const uses = itemUsage[it.name] || [];
+                return (
+                  <div
+                    key={it.name}
+                    style={{
+                      background: "rgba(20,24,42,0.6)",
+                      border: "1px solid rgba(71,85,105,0.3)",
+                      borderRadius: 8,
+                      padding: 12,
+                      display: "flex",
+                      gap: 12,
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <ItemIcon name={it.name} size={42} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{
+                        fontFamily: fontDisplay,
+                        fontSize: 12.5,
+                        fontWeight: 700,
+                        color: "#fafafa",
+                        letterSpacing: 0.5,
+                      }}>{it.name}</div>
+                      <div style={{ fontSize: 11.5, color: "#cbd5e1", marginTop: 4, lineHeight: 1.4 }}>
+                        {it.stat || "—"}
+                      </div>
+                      {it.recipe && (
+                        <div style={{ display: "flex", gap: 4, marginTop: 8, alignItems: "center", flexWrap: "wrap" }}>
+                          <ItemIcon name={it.recipe[0]} size={20} />
+                          <span style={{ color: "#64748b", fontSize: 11 }}>+</span>
+                          <ItemIcon name={it.recipe[1]} size={20} />
+                        </div>
+                      )}
+                      {uses.length > 0 && (
+                        <div style={{ marginTop: 6, fontSize: 10, color: "#a78bfa" }}>
+                          used in: {uses.slice(0, 2).join(", ")}{uses.length > 2 ? `, +${uses.length - 2}` : ""}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
  
