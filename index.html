@@ -1,0 +1,2025 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>TFT Codex · Set 17 Playbook</title>
+  <meta name="description" content="Personal TFT Set 17 (Space Gods) comp playbook with leveling guides, item priority, hex positioning, and matchup variations." />
+  <meta name="theme-color" content="#06070d" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fbbf24'%3E%3Cpath d='M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14' stroke='%23fbbf24' stroke-width='2' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" />
+  <style>
+    html, body { margin: 0; padding: 0; min-height: 100vh; background: #06070d; color: #e5e7eb; }
+    body { font-family: 'DM Sans', system-ui, -apple-system, sans-serif; }
+    *, *::before, *::after { box-sizing: border-box; }
+    button { cursor: pointer; }
+    input, textarea, select, button { font-family: inherit; }
+    /* Loading splash before React boots */
+    #boot {
+      position: fixed; inset: 0; display: grid; place-items: center;
+      font-family: 'Orbitron', sans-serif; letter-spacing: 4px;
+      color: #fbbf24; font-size: 14px; font-weight: 700;
+      background: radial-gradient(ellipse at center, #14102a 0%, #06070d 70%);
+    }
+    #boot::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        radial-gradient(1px 1px at 12% 22%, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1px 1px at 36% 14%, rgba(255,255,255,0.4), transparent),
+        radial-gradient(1.5px 1.5px at 65% 12%, rgba(251,191,36,0.6), transparent),
+        radial-gradient(1.5px 1.5px at 78% 30%, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1.5px 1.5px at 8% 65%, rgba(168,85,247,0.5), transparent),
+        radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.6), transparent);
+    }
+    #boot span { animation: pulse 1.5s ease-in-out infinite; z-index: 1; }
+    @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+  </style>
+</head>
+<body>
+  <div id="boot"><span>LOADING TFT CODEX</span></div>
+  <div id="root"></div>
+
+  <!-- React + Babel from CDN. Production builds for fast first paint. -->
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+
+  <script type="text/babel" data-presets="react">
+
+const { useState, useEffect, useMemo } = React;
+
+// ============================================================
+// localStorage shim that matches the API the artifact expected
+// (window.storage.get / set / delete return promises).
+// ============================================================
+const storage = {
+  async get(key) {
+    try {
+      const v = localStorage.getItem(key);
+      if (v === null) return null;
+      return { key, value: v };
+    } catch (e) { return null; }
+  },
+  async set(key, value) {
+    localStorage.setItem(key, value);
+    return { key, value };
+  },
+  async delete(key) {
+    localStorage.removeItem(key);
+    return { key, deleted: true };
+  },
+  async list(prefix) {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!prefix || (k && k.startsWith(prefix))) keys.push(k);
+    }
+    return { keys, prefix };
+  },
+};
+
+// ============================================================
+// Inline Lucide icons — no external dependency.
+// Paths sourced from the Lucide icon set (ISC license).
+// ============================================================
+const ICON_PATHS = {
+  "plus":            <><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></>,
+  "trash-2":         <><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></>,
+  "edit-3":          <><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></>,
+  "save":            <><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></>,
+  "x":               <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>,
+  "copy":            <><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></>,
+  "download":        <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></>,
+  "upload":          <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></>,
+  "star":            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>,
+  "swords":          <><polyline points="14.5,17.5 3,6 3,3 6,3 17.5,14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="19" y1="21" x2="21" y2="19"/><polyline points="14.5,6.5 18,3 21,3 21,6 17.5,9.5"/><line x1="5" y1="14" x2="9" y2="18"/><line x1="7" y1="17" x2="4" y2="20"/><line x1="3" y1="19" x2="5" y2="21"/></>,
+  "shield":          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>,
+  "sparkles":        <><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></>,
+  "trending-up":     <><polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/><polyline points="16,7 22,7 22,13"/></>,
+  "target":          <><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></>,
+  "alert-triangle":  <><path d="M21.73 18l-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></>,
+  "chevron-right":   <polyline points="9,18 15,12 9,6"/>,
+  "search":          <><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></>,
+  "book-open":       <><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></>,
+  "crosshair":       <><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></>,
+  "crown":           <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/>,
+  "zap":             <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>,
+};
+
+function Icon({ name, size = 16, color = "currentColor", strokeWidth = 2, fill = "none", style }) {
+  const path = ICON_PATHS[name];
+  if (!path) return null;
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill={fill}
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0, ...(style || {}) }}
+    >
+      {path}
+    </svg>
+  );
+}
+
+
+// =============================================================
+// TFT CODEX — Set 17 (Space Gods) comp tracker
+// Persistent, editable, in-depth guide builder
+// =============================================================
+
+const COST_COLORS = {
+  1: { ring: "#9ca3af", bg: "rgba(156,163,175,0.12)", text: "#d1d5db" },
+  2: { ring: "#10b981", bg: "rgba(16,185,129,0.14)", text: "#6ee7b7" },
+  3: { ring: "#3b82f6", bg: "rgba(59,130,246,0.14)", text: "#93c5fd" },
+  4: { ring: "#a855f7", bg: "rgba(168,85,247,0.16)", text: "#d8b4fe" },
+  5: { ring: "#fbbf24", bg: "rgba(251,191,36,0.18)", text: "#fcd34d" },
+};
+
+const TIER_STYLES = {
+  S: { bg: "linear-gradient(135deg,#fbbf24,#f59e0b)", text: "#1a1300", glow: "rgba(251,191,36,0.45)" },
+  A: { bg: "linear-gradient(135deg,#c084fc,#a855f7)", text: "#1a0a2e", glow: "rgba(168,85,247,0.4)" },
+  B: { bg: "linear-gradient(135deg,#60a5fa,#3b82f6)", text: "#08152e", glow: "rgba(59,130,246,0.4)" },
+  C: { bg: "linear-gradient(135deg,#34d399,#10b981)", text: "#04231a", glow: "rgba(16,185,129,0.4)" },
+  D: { bg: "linear-gradient(135deg,#fb7185,#e11d48)", text: "#2a0712", glow: "rgba(225,29,72,0.4)" },
+};
+
+// ---- Seed data: Set 17 (Space Gods) examples ----
+const SEED_COMPS = [
+  {
+    id: "bruiser-yi",
+    name: "Bruiser Master Yi",
+    tier: "S",
+    playstyle: "Slow-roll · Frontline carry",
+    summary:
+      "Yi turns into a one-man wrecking crew with Bruiser HP scaling and Eradicator true-damage. Hyper-tanky AND high-damage — the textbook 'tanked games' comp.",
+    champions: [
+      { name: "Master Yi", cost: 4, stars: 3, traits: "Eradicator · Brawler", items: "Bloodthirster, Titan's Resolve, Quicksilver", role: "carry" },
+      { name: "Cho'Gath", cost: 1, stars: 3, traits: "Brawler · Primordian", items: "Warmog's Armor", role: "tank" },
+      { name: "Aatrox", cost: 1, stars: 3, traits: "Brawler · Doomer", items: "—", role: "tank" },
+      { name: "Gragas", cost: 2, stars: 2, traits: "Brawler · Party Animal", items: "Sunfire Cape (optional)", role: "tank" },
+      { name: "Belveth", cost: 2, stars: 2, traits: "Eradicator · Voyager", items: "—", role: "trait bot" },
+      { name: "Jax", cost: 2, stars: 2, traits: "Brawler · Galaxy Hunter", items: "—", role: "trait bot" },
+      { name: "Illaoi", cost: 4, stars: 2, traits: "Brawler · Primordian", items: "Gargoyle Stoneplate, Dragon's Claw", role: "tank" },
+      { name: "Ornn", cost: 4, stars: 2, traits: "Bulwark · Forge", items: "—", role: "artifact forger" },
+    ],
+    itemPriority: {
+      carry:
+        "Master Yi BIS: Bloodthirster (sustain + omnivamp) → Titan's Resolve (stacking AD/armor) → Quicksilver (CC immunity early). Sub: Sterak's Gage, Edge of Night, Steraks.",
+      tank:
+        "Illaoi tank items: Gargoyle Stoneplate (scaling armor/MR) + Dragon's Claw (anti-AP) + Warmog's (HP). Cho'Gath: single Warmog's is enough at 3-star.",
+      utility:
+        "Gragas with Sunfire if you have leftover rod. Save extra components for Ornn artifact rolls — Anima Visage and Rocket-Propelled Fist are huge.",
+    },
+    leveling: [
+      { stage: "2-1", action: "Stay level 4. Hold pairs of every Brawler 1-cost (Cho, Aatrox).", econ: "Push to 50g by 2-5." },
+      { stage: "2-5", action: "Level to 5 only if streaking. Otherwise stay 4 and hold econ.", econ: "Interest cap at 50g." },
+      { stage: "3-2", action: "Level to 6. Slow-roll at 50g for Cho'Gath 3 + Aatrox 3.", econ: "Stay above 50g. Roll 10g at a time when below 30g HP." },
+      { stage: "4-1", action: "Level to 7. Look for Yi (4-cost). If you have 1 copy, slow-roll. If 0 copies, push level.", econ: "Drop econ if low HP." },
+      { stage: "4-5", action: "Roll down for Yi 2 + Illaoi 2. Don't go below 20g unless under 30 HP.", econ: "—" },
+      { stage: "5-1", action: "Level to 8. Add Ornn for forge artifacts + Bulwark.", econ: "—" },
+      { stage: "6-1+", action: "Push 9 only if Yi is 3-starred and you're top 2. Otherwise focus on Illaoi 2 and Ornn artifact.", econ: "—" },
+    ],
+    positioning: {
+      // 4 rows × 7 cols. row 0 = frontline (top), row 3 = backline (bottom)
+      // grid stores champion name or null
+      grid: [
+        ["Cho'Gath", "Gragas", "Aatrox", "Illaoi", "Master Yi", "Jax", "Ornn"],
+        [null, null, null, "Belveth", null, null, null],
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+      ],
+      notes:
+        "Yi mid-front so he hits the most targets. Spread tanks evenly to soak AOE. Belveth one row back to bait assassins away from Yi. If facing assassins, swap Yi to corner behind Illaoi. Vs ranged comps, hard-corner Yi opposite their carry to delay engage.",
+    },
+    strategy:
+      "This is the most consistent 'tanked game' comp in Set 17. Cho'Gath 3 is your unkillable anchor — he hits ~5000 effective HP with one Warmog's. Yi's E gives true damage AND attack speed; with Titan's stacking he becomes uncatchable by rounds 5-6. Pivot only if you can't find Yi by 4-5; in that case stay Brawler reroll and push 8 with Illaoi as carry (Hand of Justice + BT instead).",
+    defensiveVariations:
+      "Defensive line: drop Belveth/Jax for Tahm Kench (Bulwark) + Rammus (Bastion) — caps lower DPS but board is nearly impossible to kill. Vs heavy AP add Dragon's Claw on Cho'Gath instead of Illaoi. Vs reroll AD, give Illaoi a Sunfire to push damage through her armor stacking. Vs Vex Fast 9, position Yi corner-opposite to bait her ult away from your tanks.",
+    counters:
+      "Loses to: high-burst 2-star legendaries that bypass armor (Vex magic damage, Aurelion ramp). Anti-heal (Morellonomicon) on enemy carry shuts down BT sustain. Mortal Reminder negates Cho'Gath HP. If you see 2+ players forcing Brawlers, pivot early — Yi gets contested fast.",
+  },
+  {
+    id: "vex-fast-9",
+    name: "Vex Fast 9",
+    tier: "A",
+    playstyle: "Fast 9 · Late-game carry",
+    summary:
+      "Open fort, lose streak through stage 3, then rocket to level 9 and find Vex 2 + 5-cost board. Bring high HP into stage 5 and you win out.",
+    champions: [
+      { name: "Vex", cost: 5, stars: 2, traits: "Dark Lady · Psionic", items: "Jeweled Gauntlet, Spear of Shojin, Rabadon's Deathcap", role: "carry" },
+      { name: "Aurora", cost: 3, stars: 2, traits: "Psionic · Conduit", items: "—", role: "trait/utility" },
+      { name: "Karma", cost: 5, stars: 1, traits: "Vanguard · Redeemer", items: "Redemption (if extra)", role: "support" },
+      { name: "Leblanc", cost: 5, stars: 1, traits: "Rogue · Dark Lady", items: "Hand of Justice (optional)", role: "secondary AP" },
+      { name: "Ornn", cost: 4, stars: 2, traits: "Bulwark · Forge", items: "—", role: "tank/forge" },
+      { name: "Tahm Kench", cost: 4, stars: 2, traits: "Bulwark · Party Animal", items: "Warmog's Armor, Gargoyle", role: "tank" },
+      { name: "Illaoi", cost: 4, stars: 2, traits: "Brawler · Primordian", items: "Dragon's Claw", role: "tank" },
+      { name: "Bard", cost: 5, stars: 1, traits: "Conduit · Oracle", items: "—", role: "support" },
+      { name: "Sona", cost: 5, stars: 1, traits: "Conduit · Redeemer", items: "—", role: "secondary support" },
+    ],
+    itemPriority: {
+      carry:
+        "Vex BIS: Jeweled Gauntlet → Spear of Shojin → Rabadon's. Sub Hand of Justice if no rod. Avoid Blue Buff — her ult mana cost is fine with Shojin.",
+      tank:
+        "Tahm Kench wants Warmog's + Gargoyle + (Dragon's Claw or Bramble depending on lobby). Illaoi gets the third tank item slot.",
+      utility:
+        "Hold all components flexibly until 3-2. If you brick 3 rods, pivot to Karma Leblanc instead.",
+    },
+    leveling: [
+      { stage: "2-1", action: "Open fort. Play strongest board — don't push. Sell early to keep XP/gold focus.", econ: "Push to 50g ASAP." },
+      { stage: "3-2", action: "Stay level 6. Lose-streak. Do NOT roll.", econ: "Cap interest." },
+      { stage: "3-5", action: "Level to 7. Play tempo board with frontline only.", econ: "Stay 50g." },
+      { stage: "4-1", action: "Level to 8 immediately on 4-1.", econ: "—" },
+      { stage: "4-2", action: "Roll only if 2-star 4-cost upgrade is significant. Otherwise save.", econ: "Stay above 30g." },
+      { stage: "4-5", action: "LEVEL TO 9 on 4-5 if HP > 40. Roll 30+ gold for Vex.", econ: "Spend it all if needed." },
+      { stage: "5-1+", action: "Find Vex 2. Add 5-costs to cap. Hard-roll at 0 if no Vex by 5-3.", econ: "—" },
+    ],
+    positioning: {
+      grid: [
+        [null, "Tahm Kench", "Illaoi", "Ornn", null, null, null],
+        [null, null, "Sona", null, "Karma", null, "Leblanc"],
+        [null, "Aurora", null, null, null, "Bard", null],
+        ["Vex", null, null, null, null, null, null],
+      ],
+      notes:
+        "Vex hard-corner. Aurora next to her for Conduit mana. Tanks clumped center-front to absorb. Move Vex to opposite corner if facing assassin matchup. Vs Yi specifically, sandwich Vex behind Tahm Kench in same column.",
+    },
+    strategy:
+      "This comp wins by getting to 9 first with HP. The whole game plan is: don't waste gold. Don't over-level. Don't roll on 7. Once you hit 9, Vex 2 + 3 random 5-costs is usually enough. The flex slots (Bard, Sona, Leblanc) are whoever shows. Karma is core for Vanguard armor on the frontline.",
+    defensiveVariations:
+      "If lobby has 2+ heavy AD comps, swap Illaoi → Rammus (Bastion) for stacking armor. Drop Sona for Shen if you need Bastion + free shields. Vs assassin-heavy lobby (Akali, Talon), play Vex bottom-row hard-corner with a Bastion frontline and add Leblanc front-corner as bait.",
+    counters:
+      "Loses to: anyone who 3-stars a 4-cost (Yi 3, Illaoi 3). They simply outscale your level 9 board. Also vulnerable in stage 4 — if you're below 30 HP at 4-1, you cannot fast 9 safely; pivot to Leblanc or Karma reroll instead. Anti-mana (Sunder/Shred) on Vex is brutal.",
+  },
+  {
+    id: "primordian-reroll",
+    name: "Primordian Reroll",
+    tier: "S",
+    playstyle: "Reroll · Defensive frontline",
+    summary:
+      "Cheap, beginner-friendly, and one of the tankiest boards in the game. Cho'Gath 3 + Illaoi 2 is a wall. Great if you're learning positioning and economy.",
+    champions: [
+      { name: "Cho'Gath", cost: 1, stars: 3, traits: "Brawler · Primordian", items: "Warmog's Armor, Gargoyle Stoneplate, Dragon's Claw", role: "carry tank" },
+      { name: "Rek'Sai", cost: 1, stars: 3, traits: "Primordian · Voyager", items: "Hand of Justice (optional)", role: "damage" },
+      { name: "Nasus", cost: 1, stars: 3, traits: "Primordian · Bastion", items: "—", role: "tank" },
+      { name: "Briar", cost: 1, stars: 3, traits: "Primordian · Brawler", items: "Bloodthirster", role: "secondary carry" },
+      { name: "Belveth", cost: 2, stars: 2, traits: "Primordian · Voyager · Eradicator", items: "—", role: "trait + damage" },
+      { name: "Illaoi", cost: 4, stars: 2, traits: "Brawler · Primordian", items: "—", role: "tank/damage" },
+      { name: "Ornn", cost: 4, stars: 2, traits: "Bulwark · Forge", items: "—", role: "forge artifact" },
+    ],
+    itemPriority: {
+      carry:
+        "ALL items go on Cho'Gath. Warmog's first (HP), then Gargoyle (scaling armor), then Dragon's Claw (vs AP) OR Bramble (vs AD). He becomes the carry by surviving long enough to ult into multiple targets.",
+      tank:
+        "Cho'Gath IS the tank. Rek'Sai gets Hand of Justice if you have leftover sword + tear. Briar can take Bloodthirster as a secondary damage threat.",
+      utility:
+        "Don't slot Sunfire on Cho — it caps too fast for your scaling. Pray for Anima Visage or Rocket-Propelled Fist from Ornn forge.",
+    },
+    leveling: [
+      { stage: "2-1", action: "Win streak with strongest board. Hold all Primordian 1-costs.", econ: "Streak gold > interest early." },
+      { stage: "2-5", action: "Level to 5 if streaking, otherwise stay 4.", econ: "—" },
+      { stage: "3-2", action: "Level to 6. Start slow-rolling at 50g for 3-stars.", econ: "Stay at 50g, roll 10g at a time." },
+      { stage: "3-5 to 4-1", action: "Hard-roll for Cho 3, Reksai 3, Nasus 3. Hit at least 2 by 4-2.", econ: "Drop below 50g if needed." },
+      { stage: "4-2", action: "Level to 7 once 3-stars are mostly secured. Add Illaoi 2.", econ: "Rebuild econ." },
+      { stage: "5-1", action: "Level to 8. Add Ornn for forge.", econ: "—" },
+    ],
+    positioning: {
+      grid: [
+        ["Nasus", null, "Illaoi", "Cho'Gath", "Ornn", null, null],
+        [null, "Briar", null, "Belveth", null, "Rek'Sai", null],
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+      ],
+      notes:
+        "Cho'Gath dead-center front so his ult catches multiple targets. Tanks flanking him to soak hits. Briar/Reksai one row back as secondary damage. Avoid corners — Cho needs to be central to maximize ult value.",
+    },
+    strategy:
+      "The simplest tanked-game comp. You will survive every fight in stage 3. Goal: hit 3 three-stars by 4-1, then transition to level 7 with Illaoi. Don't get greedy pushing 8 — your power is the 3-star front. Late-game cap = level 8 with all 3-stars + Illaoi 2 + Ornn 2 + flex 5-cost (any).",
+    defensiveVariations:
+      "If lobby is AP-heavy: swap Dragon's Claw onto Cho instead of Bramble. Add Rammus over Briar for Bastion stacking armor. Vs Yi specifically, drop Belveth for Tahm Kench (Bulwark) and run Cho mid-back-row as anti-engage. Counter to backline assassins: place Nasus in the assassin-drop tile (back corner same side as enemy) to intercept.",
+    counters:
+      "Vulnerable to: high sustained DPS (Vex 2, Yi 3). True damage punches through your armor stacking — Eradicator-heavy enemy boards counter you. Anti-heal isn't a huge deal here since you don't sustain with omnivamp. If you don't hit 3-stars by 4-2 you will lose; this comp has a hard timing window.",
+  },
+];
+
+// ---- helpers ----
+const STORAGE_KEY = "tft:codex:comps:v2";        // current (frontline-top)
+const STORAGE_KEY_V1 = "tft:codex:comps:v1";    // legacy (frontline-bottom)
+
+// Convert a champion display name to a CommunityDragon asset slug.
+// "Master Yi" -> "masteryi", "Cho'Gath" -> "chogath", "Bel'Veth" -> "belveth"
+function champSlug(name) {
+  if (!name) return "";
+  return name.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+// Build the default portrait URL from a champion name.
+// Falls back gracefully via onError to initials if the image 404s
+// (e.g. for TFT-exclusive units like "The Mighty Mech").
+function defaultChampImage(name) {
+  const slug = champSlug(name);
+  if (!slug) return "";
+  return `https://raw.communitydragon.org/latest/game/assets/characters/${slug}/hud/${slug}_square.png`;
+}
+
+function getChampImageURL(champ) {
+  if (!champ) return "";
+  if (champ.image && champ.image.trim()) return champ.image.trim();
+  return defaultChampImage(champ.name);
+}
+
+// Reusable portrait component with image + initials fallback
+function ChampPortrait({ champ, size = 48, square = false }) {
+  const [failed, setFailed] = useState(false);
+  if (!champ) return null;
+  const cost = COST_COLORS[champ.cost] || COST_COLORS[1];
+  const url = getChampImageURL(champ);
+  const initials = (champ.name || "?")
+    .split(/[\s'\-.&]+/)
+    .filter(Boolean)
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
+  const baseStyle = {
+    width: size,
+    height: size,
+    borderRadius: square ? 6 : "50%",
+    border: `2px solid ${cost.ring}`,
+    objectFit: "cover",
+    flexShrink: 0,
+    boxShadow: `0 0 12px ${cost.ring}40`,
+    background: cost.bg,
+    display: "block",
+  };
+
+  if (failed || !url) {
+    return (
+      <div
+        style={{
+          ...baseStyle,
+          display: "grid",
+          placeItems: "center",
+          fontFamily: fontDisplay,
+          fontWeight: 800,
+          fontSize: size * 0.36,
+          color: cost.text,
+          letterSpacing: 0.5,
+        }}
+      >
+        {initials}
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={url}
+      alt={champ.name}
+      onError={() => setFailed(true)}
+      style={baseStyle}
+      loading="lazy"
+    />
+  );
+}
+
+const newBlankComp = () => ({
+  id: `comp-${Date.now()}`,
+  name: "New Composition",
+  tier: "B",
+  playstyle: "Standard · Mid-game",
+  summary: "Short pitch for the comp. When do I play this? What does it do?",
+  champions: [],
+  itemPriority: { carry: "", tank: "", utility: "" },
+  leveling: [{ stage: "2-1", action: "", econ: "" }],
+  positioning: {
+    grid: [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+    ],
+    notes: "",
+  },
+  strategy: "",
+  defensiveVariations: "",
+  counters: "",
+});
+
+// =============================================================
+// Main Component
+// =============================================================
+function TFTCodex() {
+  const [comps, setComps] = useState(SEED_COMPS);
+  const [selectedId, setSelectedId] = useState(SEED_COMPS[0].id);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(null);
+  const [search, setSearch] = useState("");
+  const [loadState, setLoadState] = useState("loading"); // loading | ready
+  const [tierFilter, setTierFilter] = useState("ALL");
+
+  // Load from persistent storage on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        // Try current schema first
+        const result = await storage.get(STORAGE_KEY);
+        if (result && result.value) {
+          const parsed = JSON.parse(result.value);
+          if (Array.isArray(parsed) && parsed.length) {
+            setComps(parsed);
+            setSelectedId(parsed[0].id);
+            setLoadState("ready");
+            return;
+          }
+        }
+      } catch (e) {
+        // not present — fall through to migration
+      }
+      try {
+        // Legacy schema: grid was frontline-bottom — flip each grid row order
+        const legacy = await storage.get(STORAGE_KEY_V1);
+        if (legacy && legacy.value) {
+          const parsed = JSON.parse(legacy.value);
+          if (Array.isArray(parsed) && parsed.length) {
+            const migrated = parsed.map((c) => ({
+              ...c,
+              positioning: {
+                ...(c.positioning || {}),
+                grid:
+                  c.positioning && Array.isArray(c.positioning.grid)
+                    ? [...c.positioning.grid].reverse()
+                    : emptyGrid(),
+                notes: c.positioning?.notes || "",
+              },
+            }));
+            setComps(migrated);
+            setSelectedId(migrated[0].id);
+          }
+        }
+      } catch (e) {
+        // first run — keep seeds
+      }
+      setLoadState("ready");
+    })();
+  }, []);
+
+  // Save whenever comps change (after initial load)
+  useEffect(() => {
+    if (loadState !== "ready") return;
+    (async () => {
+      try {
+        await storage.set(STORAGE_KEY, JSON.stringify(comps));
+      } catch (e) {
+        console.error("save failed", e);
+      }
+    })();
+  }, [comps, loadState]);
+
+  const selected = useMemo(
+    () => comps.find((c) => c.id === selectedId) || comps[0],
+    [comps, selectedId]
+  );
+
+  const filtered = useMemo(() => {
+    return comps.filter((c) => {
+      if (tierFilter !== "ALL" && c.tier !== tierFilter) return false;
+      if (!search) return true;
+      const q = search.toLowerCase();
+      return (
+        c.name.toLowerCase().includes(q) ||
+        c.playstyle.toLowerCase().includes(q) ||
+        (c.champions || []).some((ch) => ch.name.toLowerCase().includes(q))
+      );
+    });
+  }, [comps, search, tierFilter]);
+
+  function startEdit() {
+    setDraft(JSON.parse(JSON.stringify(selected)));
+    setEditing(true);
+  }
+  function cancelEdit() {
+    setDraft(null);
+    setEditing(false);
+  }
+  function saveEdit() {
+    setComps((cs) => cs.map((c) => (c.id === draft.id ? draft : c)));
+    setEditing(false);
+    setDraft(null);
+  }
+  function createNew() {
+    const c = newBlankComp();
+    setComps((cs) => [c, ...cs]);
+    setSelectedId(c.id);
+    setDraft(JSON.parse(JSON.stringify(c)));
+    setEditing(true);
+  }
+  function duplicateCurrent() {
+    const dup = JSON.parse(JSON.stringify(selected));
+    dup.id = `comp-${Date.now()}`;
+    dup.name = dup.name + " (copy)";
+    setComps((cs) => [dup, ...cs]);
+    setSelectedId(dup.id);
+  }
+  function deleteCurrent() {
+    if (comps.length <= 1) return;
+    if (!confirm(`Delete "${selected.name}"? This can't be undone.`)) return;
+    const next = comps.filter((c) => c.id !== selected.id);
+    setComps(next);
+    setSelectedId(next[0].id);
+  }
+  function exportJSON() {
+    const blob = new Blob([JSON.stringify(comps, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "tft-codex.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+  function importJSON(data) {
+    if (!Array.isArray(data) || data.length === 0) {
+      alert("That file doesn't look like a TFT Codex export (expected a non-empty array).");
+      return;
+    }
+    if (!confirm(`Import ${data.length} comps? This will REPLACE your current comps. (Tip: export first to back them up.)`)) return;
+    setComps(data);
+    setSelectedId(data[0].id);
+  }
+  function resetSeeds() {
+    if (!confirm("Reset all comps to defaults? Your edits will be lost.")) return;
+    setComps(SEED_COMPS);
+    setSelectedId(SEED_COMPS[0].id);
+  }
+
+  const view = editing ? draft : selected;
+
+  return (
+    <div style={styles.shell}>
+      <BgEffects />
+      <Topbar
+        onNew={createNew}
+        onExport={exportJSON}
+        onImport={importJSON}
+        onReset={resetSeeds}
+      />
+      <div style={styles.body}>
+        <Sidebar
+          comps={filtered}
+          allCount={comps.length}
+          selectedId={selected?.id}
+          onSelect={(id) => {
+            if (editing) return;
+            setSelectedId(id);
+          }}
+          search={search}
+          setSearch={setSearch}
+          tierFilter={tierFilter}
+          setTierFilter={setTierFilter}
+          onNew={createNew}
+        />
+        <main style={styles.main}>
+          {view ? (
+            <CompView
+              comp={view}
+              editing={editing}
+              onChange={setDraft}
+              onEdit={startEdit}
+              onCancel={cancelEdit}
+              onSave={saveEdit}
+              onDuplicate={duplicateCurrent}
+              onDelete={deleteCurrent}
+              canDelete={comps.length > 1}
+            />
+          ) : (
+            <div style={{ padding: 40 }}>No comp selected.</div>
+          )}
+        </main>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================
+// Top bar
+// =============================================================
+function Topbar({ onNew, onExport, onImport, onReset }) {
+  const fileInputRef = React.useRef(null);
+  return (
+    <header style={styles.topbar}>
+      <div style={styles.brand}>
+        <div style={styles.brandIcon}>
+          <Icon name="crown" size={18} strokeWidth={2.4} color="#fbbf24" />
+        </div>
+        <div>
+          <div style={styles.brandTitle}>TFT CODEX</div>
+          <div style={styles.brandSub}>Set 17 · Space Gods · personal playbook</div>
+        </div>
+      </div>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <button style={styles.topBtnGhost} onClick={onReset} title="Restore default seed comps">
+          <Icon name="sparkles" size={14} /> reset seeds
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="application/json,.json"
+          style={{ display: "none" }}
+          onChange={async (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            try {
+              const text = await file.text();
+              onImport(JSON.parse(text));
+            } catch (err) {
+              alert("Could not read that JSON file.");
+            }
+            e.target.value = "";
+          }}
+        />
+        <button style={styles.topBtnGhost} onClick={() => fileInputRef.current && fileInputRef.current.click()}>
+          <Icon name="upload" size={14} /> import
+        </button>
+        <button style={styles.topBtnGhost} onClick={onExport}>
+          <Icon name="download" size={14} /> export
+        </button>
+        <button style={styles.topBtnPrimary} onClick={onNew}>
+          <Icon name="plus" size={14} /> new comp
+        </button>
+      </div>
+    </header>
+  );
+}
+
+// =============================================================
+// Sidebar
+// =============================================================
+function Sidebar({ comps, allCount, selectedId, onSelect, search, setSearch, tierFilter, setTierFilter, onNew }) {
+  const tiers = ["ALL", "S", "A", "B", "C", "D"];
+  return (
+    <aside style={styles.sidebar}>
+      <div style={styles.searchWrap}>
+        <Icon name="search" size={14} color="#64748b" style={{ position: "absolute", left: 12, top: 12 }} />
+        <input
+          style={styles.searchInput}
+          placeholder="search comps, units…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+      <div style={styles.tierRow}>
+        {tiers.map((t) => (
+          <button
+            key={t}
+            onClick={() => setTierFilter(t)}
+            style={{
+              ...styles.tierChip,
+              ...(tierFilter === t ? styles.tierChipActive : {}),
+            }}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+      <div style={styles.compList}>
+        {comps.length === 0 && (
+          <div style={styles.emptyList}>
+            no matches.
+            <button style={{ ...styles.topBtnPrimary, marginTop: 8 }} onClick={onNew}>
+              <Icon name="plus" size={12} /> create one
+            </button>
+          </div>
+        )}
+        {comps.map((c) => (
+          <button
+            key={c.id}
+            onClick={() => onSelect(c.id)}
+            style={{
+              ...styles.compCard,
+              ...(c.id === selectedId ? styles.compCardActive : {}),
+            }}
+          >
+            <TierBadge tier={c.tier} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={styles.compCardName}>{c.name}</div>
+              <div style={styles.compCardSub}>{c.playstyle}</div>
+            </div>
+            <Icon name="chevron-right" size={14} color="#64748b" />
+          </button>
+        ))}
+      </div>
+      <div style={styles.sidebarFooter}>{allCount} comps · auto-saved</div>
+    </aside>
+  );
+}
+
+function TierBadge({ tier, big }) {
+  const t = TIER_STYLES[tier] || TIER_STYLES.B;
+  return (
+    <div
+      style={{
+        background: t.bg,
+        color: t.text,
+        boxShadow: `0 0 18px ${t.glow}`,
+        width: big ? 44 : 30,
+        height: big ? 44 : 30,
+        borderRadius: 8,
+        display: "grid",
+        placeItems: "center",
+        fontFamily: "Orbitron, sans-serif",
+        fontWeight: 800,
+        fontSize: big ? 20 : 14,
+        letterSpacing: 1,
+        flexShrink: 0,
+      }}
+    >
+      {tier}
+    </div>
+  );
+}
+
+// =============================================================
+// Comp View (read or edit mode)
+// =============================================================
+function CompView({ comp, editing, onChange, onEdit, onCancel, onSave, onDuplicate, onDelete, canDelete }) {
+  const update = (patch) => onChange({ ...comp, ...patch });
+
+  return (
+    <div style={styles.compRoot}>
+      {/* Header */}
+      <section style={styles.heroCard}>
+        <div style={{ display: "flex", gap: 18, alignItems: "flex-start" }}>
+          <TierBadge tier={comp.tier} big />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            {editing ? (
+              <>
+                <input
+                  style={styles.heroNameInput}
+                  value={comp.name}
+                  onChange={(e) => update({ name: e.target.value })}
+                />
+                <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
+                  <select
+                    style={styles.select}
+                    value={comp.tier}
+                    onChange={(e) => update({ tier: e.target.value })}
+                  >
+                    {Object.keys(TIER_STYLES).map((t) => (
+                      <option key={t} value={t}>Tier {t}</option>
+                    ))}
+                  </select>
+                  <input
+                    style={{ ...styles.input, flex: 1, minWidth: 200 }}
+                    value={comp.playstyle}
+                    onChange={(e) => update({ playstyle: e.target.value })}
+                    placeholder="Playstyle (e.g. Slow-roll · Frontline carry)"
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <h1 style={styles.heroName}>{comp.name}</h1>
+                <div style={styles.heroPlaystyle}>{comp.playstyle}</div>
+              </>
+            )}
+          </div>
+          <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+            {editing ? (
+              <>
+                <button style={styles.btnGhost} onClick={onCancel}>
+                  <Icon name="x" size={14} /> cancel
+                </button>
+                <button style={styles.btnPrimary} onClick={onSave}>
+                  <Icon name="save" size={14} /> save
+                </button>
+              </>
+            ) : (
+              <>
+                <button style={styles.btnGhost} onClick={onDuplicate} title="Duplicate">
+                  <Icon name="copy" size={14} /> dupe
+                </button>
+                <button
+                  style={{ ...styles.btnGhost, opacity: canDelete ? 1 : 0.4 }}
+                  onClick={onDelete}
+                  disabled={!canDelete}
+                  title={canDelete ? "Delete" : "Need at least one comp"}
+                >
+                  <Icon name="trash-2" size={14} />
+                </button>
+                <button style={styles.btnPrimary} onClick={onEdit}>
+                  <Icon name="edit-3" size={14} /> edit
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+        <div style={{ marginTop: 18 }}>
+          {editing ? (
+            <textarea
+              style={styles.textarea}
+              rows={3}
+              value={comp.summary}
+              onChange={(e) => update({ summary: e.target.value })}
+              placeholder="The pitch — when and why to play this comp."
+            />
+          ) : (
+            <p style={styles.summary}>{comp.summary}</p>
+          )}
+        </div>
+      </section>
+
+      {/* Final Board */}
+      <Section title="Final Board" icon={<Icon name="sparkles" size={16} />}>
+        <ChampionList
+          champions={comp.champions || []}
+          editing={editing}
+          onChange={(champs) => update({ champions: champs })}
+        />
+      </Section>
+
+      {/* Item Priority */}
+      <Section title="Item Priority" icon={<Icon name="swords" size={16} />}>
+        <div style={styles.itemGrid}>
+          {[
+            { key: "carry", label: "Carry", icon: <Icon name="crosshair" size={14} color="#f43f5e" /> },
+            { key: "tank", label: "Tank", icon: <Icon name="shield" size={14} color="#22d3ee" /> },
+            { key: "utility", label: "Utility / Flex", icon: <Icon name="sparkles" size={14} color="#fbbf24" /> },
+          ].map(({ key, label, icon }) => (
+            <div key={key} style={styles.itemCol}>
+              <div style={styles.itemColHead}>
+                {icon}
+                <span>{label}</span>
+              </div>
+              {editing ? (
+                <textarea
+                  style={styles.textarea}
+                  rows={4}
+                  value={comp.itemPriority?.[key] || ""}
+                  onChange={(e) =>
+                    update({
+                      itemPriority: { ...(comp.itemPriority || {}), [key]: e.target.value },
+                    })
+                  }
+                  placeholder={`${label} item priority…`}
+                />
+              ) : (
+                <div style={styles.proseBox}>{comp.itemPriority?.[key] || <em style={{ opacity: 0.5 }}>—</em>}</div>
+              )}
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* Leveling Guide */}
+      <Section title="Leveling & Economy Guide" icon={<Icon name="trending-up" size={16} />}>
+        <LevelingTable
+          rows={comp.leveling || []}
+          editing={editing}
+          onChange={(rows) => update({ leveling: rows })}
+        />
+      </Section>
+
+      {/* Positioning */}
+      <Section title="Positioning" icon={<Icon name="target" size={16} />}>
+        <PositioningEditor
+          positioning={comp.positioning || { grid: emptyGrid(), notes: "" }}
+          champions={comp.champions || []}
+          editing={editing}
+          onChange={(p) => update({ positioning: p })}
+        />
+      </Section>
+
+      {/* Strategy */}
+      <Section title="Strategy & Reasoning" icon={<Icon name="book-open" size={16} />}>
+        {editing ? (
+          <textarea
+            style={styles.textarea}
+            rows={6}
+            value={comp.strategy || ""}
+            onChange={(e) => update({ strategy: e.target.value })}
+            placeholder="Why this comp wins. Power spikes. Pivot conditions."
+          />
+        ) : (
+          <div style={styles.proseBox}>{comp.strategy || <em style={{ opacity: 0.5 }}>—</em>}</div>
+        )}
+      </Section>
+
+      {/* Defensive Variations */}
+      <Section title="Defensive Variations" icon={<Icon name="shield" size={16} />}>
+        {editing ? (
+          <textarea
+            style={styles.textarea}
+            rows={5}
+            value={comp.defensiveVariations || ""}
+            onChange={(e) => update({ defensiveVariations: e.target.value })}
+            placeholder="Alternative tanks/items per matchup (vs AP, vs assassins, vs reroll AD…)"
+          />
+        ) : (
+          <div style={styles.proseBox}>{comp.defensiveVariations || <em style={{ opacity: 0.5 }}>—</em>}</div>
+        )}
+      </Section>
+
+      {/* Counters */}
+      <Section title="Counters & Watch For" icon={<Icon name="alert-triangle" size={16} />}>
+        {editing ? (
+          <textarea
+            style={styles.textarea}
+            rows={4}
+            value={comp.counters || ""}
+            onChange={(e) => update({ counters: e.target.value })}
+            placeholder="What beats this comp. Pivot signals."
+          />
+        ) : (
+          <div style={styles.proseBox}>{comp.counters || <em style={{ opacity: 0.5 }}>—</em>}</div>
+        )}
+      </Section>
+
+      <div style={{ height: 60 }} />
+    </div>
+  );
+}
+
+function emptyGrid() {
+  return [
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+  ];
+}
+
+function Section({ title, icon, children }) {
+  return (
+    <section style={styles.section}>
+      <div style={styles.sectionHead}>
+        <span style={styles.sectionIcon}>{icon}</span>
+        <h2 style={styles.sectionTitle}>{title}</h2>
+        <div style={styles.sectionRule} />
+      </div>
+      <div>{children}</div>
+    </section>
+  );
+}
+
+// =============================================================
+// Champion list
+// =============================================================
+function ChampionList({ champions, editing, onChange }) {
+  function update(i, patch) {
+    onChange(champions.map((c, idx) => (idx === i ? { ...c, ...patch } : c)));
+  }
+  function remove(i) {
+    onChange(champions.filter((_, idx) => idx !== i));
+  }
+  function add() {
+    onChange([
+      ...champions,
+      { name: "New Champion", cost: 1, stars: 2, traits: "", items: "", role: "" },
+    ]);
+  }
+  return (
+    <div>
+      <div style={styles.champGrid}>
+        {champions.map((c, i) => (
+          <ChampCard
+            key={i}
+            champ={c}
+            editing={editing}
+            onChange={(patch) => update(i, patch)}
+            onRemove={() => remove(i)}
+          />
+        ))}
+        {editing && (
+          <button onClick={add} style={styles.addCard}>
+            <Icon name="plus" size={20} />
+            <span style={{ marginTop: 6, fontSize: 12, letterSpacing: 1 }}>add unit</span>
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ChampCard({ champ, editing, onChange, onRemove }) {
+  const cost = COST_COLORS[champ.cost] || COST_COLORS[1];
+  return (
+    <div
+      style={{
+        ...styles.champCard,
+        borderColor: cost.ring,
+        background: `linear-gradient(180deg, ${cost.bg}, rgba(20,21,42,0.92))`,
+      }}
+    >
+      <div style={styles.champTop}>
+        <ChampPortrait champ={champ} size={54} square />
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+          <div
+            style={{
+              ...styles.champCost,
+              color: cost.text,
+              borderColor: cost.ring,
+            }}
+          >
+            {champ.cost}c
+          </div>
+          <div style={{ display: "flex", gap: 3 }}>
+            {Array.from({ length: champ.stars || 1 }).map((_, i) => (
+              <Icon name="star" key={i} size={11} fill={cost.ring} color={cost.ring} />
+            ))}
+          </div>
+        </div>
+      </div>
+      {editing ? (
+        <>
+          <input
+            style={{ ...styles.input, marginBottom: 6, fontWeight: 700 }}
+            value={champ.name}
+            onChange={(e) => onChange({ name: e.target.value })}
+          />
+          <div style={{ display: "flex", gap: 6, marginBottom: 6 }}>
+            <select
+              style={{ ...styles.select, flex: 1 }}
+              value={champ.cost}
+              onChange={(e) => onChange({ cost: parseInt(e.target.value, 10) })}
+            >
+              {[1, 2, 3, 4, 5].map((n) => (
+                <option key={n} value={n}>{n}-cost</option>
+              ))}
+            </select>
+            <select
+              style={{ ...styles.select, flex: 1 }}
+              value={champ.stars}
+              onChange={(e) => onChange({ stars: parseInt(e.target.value, 10) })}
+            >
+              {[1, 2, 3].map((n) => (
+                <option key={n} value={n}>{n}★</option>
+              ))}
+            </select>
+          </div>
+          <input
+            style={{ ...styles.input, marginBottom: 6 }}
+            value={champ.traits || ""}
+            onChange={(e) => onChange({ traits: e.target.value })}
+            placeholder="Traits (e.g. Brawler · Primordian)"
+          />
+          <input
+            style={{ ...styles.input, marginBottom: 6 }}
+            value={champ.items || ""}
+            onChange={(e) => onChange({ items: e.target.value })}
+            placeholder="Items (comma-separated)"
+          />
+          <input
+            style={{ ...styles.input, marginBottom: 6 }}
+            value={champ.role || ""}
+            onChange={(e) => onChange({ role: e.target.value })}
+            placeholder="Role (carry / tank / utility)"
+          />
+          <input
+            style={{ ...styles.input, marginBottom: 8, fontSize: 11 }}
+            value={champ.image || ""}
+            onChange={(e) => onChange({ image: e.target.value })}
+            placeholder="Image URL (optional — auto if blank)"
+          />
+          <button style={styles.removeBtn} onClick={onRemove}>
+            <Icon name="trash-2" size={11} /> remove
+          </button>
+        </>
+      ) : (
+        <>
+          <div style={{ ...styles.champName, color: cost.text }}>{champ.name}</div>
+          {champ.role && <div style={styles.champRole}>{champ.role}</div>}
+          {champ.traits && <div style={styles.champTraits}>{champ.traits}</div>}
+          {champ.items && (
+            <div style={styles.itemPills}>
+              {champ.items.split(",").map((it, i) => {
+                const t = it.trim();
+                if (!t) return null;
+                return (
+                  <span key={i} style={styles.itemPill}>
+                    {t}
+                  </span>
+                );
+              })}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+// =============================================================
+// Leveling Table
+// =============================================================
+function LevelingTable({ rows, editing, onChange }) {
+  function update(i, patch) {
+    onChange(rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
+  }
+  function remove(i) {
+    onChange(rows.filter((_, idx) => idx !== i));
+  }
+  function add() {
+    onChange([...rows, { stage: "", action: "", econ: "" }]);
+  }
+  return (
+    <div style={styles.tableWrap}>
+      <div style={styles.tableHead}>
+        <div style={{ width: 90 }}>STAGE</div>
+        <div style={{ flex: 2 }}>ACTION</div>
+        <div style={{ flex: 1 }}>ECONOMY</div>
+        {editing && <div style={{ width: 32 }} />}
+      </div>
+      {rows.map((r, i) => (
+        <div key={i} style={styles.tableRow}>
+          <div style={{ width: 90 }}>
+            {editing ? (
+              <input
+                style={styles.inputSm}
+                value={r.stage}
+                onChange={(e) => update(i, { stage: e.target.value })}
+              />
+            ) : (
+              <span style={styles.stagePill}>{r.stage}</span>
+            )}
+          </div>
+          <div style={{ flex: 2 }}>
+            {editing ? (
+              <textarea
+                style={styles.textareaSm}
+                rows={2}
+                value={r.action}
+                onChange={(e) => update(i, { action: e.target.value })}
+              />
+            ) : (
+              <div>{r.action}</div>
+            )}
+          </div>
+          <div style={{ flex: 1 }}>
+            {editing ? (
+              <textarea
+                style={styles.textareaSm}
+                rows={2}
+                value={r.econ}
+                onChange={(e) => update(i, { econ: e.target.value })}
+              />
+            ) : (
+              <div style={styles.econCell}>{r.econ}</div>
+            )}
+          </div>
+          {editing && (
+            <button style={styles.iconBtn} onClick={() => remove(i)}>
+              <Icon name="trash-2" size={12} />
+            </button>
+          )}
+        </div>
+      ))}
+      {editing && (
+        <button onClick={add} style={styles.addRowBtn}>
+          <Icon name="plus" size={12} /> add stage row
+        </button>
+      )}
+    </div>
+  );
+}
+
+// =============================================================
+// Positioning Hex Grid
+// =============================================================
+function PositioningEditor({ positioning, champions, editing, onChange }) {
+  const grid = positioning.grid || emptyGrid();
+  const [pickerCell, setPickerCell] = useState(null); // {r,c}
+
+  // Map champion name -> full champ object so the hex tiles can show portraits.
+  const byName = useMemo(() => {
+    const m = {};
+    (champions || []).forEach((c) => {
+      if (c?.name) m[c.name] = c;
+    });
+    return m;
+  }, [champions]);
+
+  function setCell(r, c, name) {
+    const next = grid.map((row, ri) =>
+      row.map((cell, ci) => (ri === r && ci === c ? name : cell))
+    );
+    onChange({ ...positioning, grid: next });
+    setPickerCell(null);
+  }
+
+  return (
+    <div>
+      <div style={styles.boardWrap}>
+        <div style={styles.boardLabel}>↑ FRONTLINE — closest to enemy</div>
+        <div style={styles.hexBoard}>
+          {grid.map((row, ri) => (
+            <div
+              key={ri}
+              style={{
+                ...styles.hexRow,
+                marginLeft: ri % 2 === 1 ? 39 : 0,
+              }}
+            >
+              {row.map((cell, ci) => (
+                <Hex
+                  key={ci}
+                  champion={cell}
+                  champData={cell ? byName[cell] : null}
+                  editing={editing}
+                  onClick={() => {
+                    if (!editing) return;
+                    if (cell) {
+                      setCell(ri, ci, null);
+                    } else {
+                      setPickerCell({ r: ri, c: ci });
+                    }
+                  }}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+        <div style={styles.boardLabel}>↓ BACKLINE — your side</div>
+      </div>
+
+      {pickerCell && (
+        <div style={styles.picker}>
+          <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 8, letterSpacing: 1 }}>
+            ASSIGN UNIT TO ROW {pickerCell.r + 1} {pickerCell.r === 0 ? "(FRONTLINE)" : pickerCell.r === grid.length - 1 ? "(BACKLINE)" : ""} · COL {pickerCell.c + 1}
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {champions.length === 0 && (
+              <div style={{ color: "#64748b", fontSize: 12 }}>
+                add units in the Final Board section first.
+              </div>
+            )}
+            {champions.map((c, i) => {
+              const cost = COST_COLORS[c.cost] || COST_COLORS[1];
+              return (
+                <button
+                  key={i}
+                  onClick={() => setCell(pickerCell.r, pickerCell.c, c.name)}
+                  style={{
+                    ...styles.pickerBtn,
+                    borderColor: cost.ring,
+                    color: cost.text,
+                  }}
+                >
+                  <ChampPortrait champ={c} size={22} />
+                  <span>{c.name}</span>
+                </button>
+              );
+            })}
+            <button
+              onClick={() => setPickerCell(null)}
+              style={{ ...styles.pickerBtn, borderColor: "#475569", color: "#94a3b8" }}
+            >
+              cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div style={{ marginTop: 16 }}>
+        <div style={styles.notesLabel}>POSITIONING NOTES</div>
+        {editing ? (
+          <textarea
+            style={styles.textarea}
+            rows={4}
+            value={positioning.notes || ""}
+            onChange={(e) => onChange({ ...positioning, notes: e.target.value })}
+            placeholder="Why this positioning. Adjustments vs assassins, ranged, AOE…"
+          />
+        ) : (
+          <div style={styles.proseBox}>{positioning.notes || <em style={{ opacity: 0.5 }}>—</em>}</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Hex({ champion, champData, editing, onClick }) {
+  const filled = !!champion;
+  const cost = champData ? COST_COLORS[champData.cost] || COST_COLORS[1] : null;
+  return (
+    <button
+      onClick={onClick}
+      disabled={!editing && !filled}
+      title={champion || (editing ? "click to assign" : "")}
+      style={{
+        ...styles.hex,
+        cursor: editing ? "pointer" : "default",
+        background: filled
+          ? cost
+            ? `linear-gradient(135deg, ${cost.bg}, rgba(20,21,42,0.4))`
+            : "linear-gradient(135deg, rgba(168,85,247,0.4), rgba(59,130,246,0.3))"
+          : editing
+          ? "rgba(30,41,59,0.6)"
+          : "rgba(15,20,38,0.5)",
+        border: filled
+          ? `1px solid ${cost ? cost.ring : "rgba(192,132,252,0.7)"}`
+          : "1px solid rgba(71,85,105,0.4)",
+        boxShadow: filled
+          ? cost
+            ? `0 0 14px ${cost.ring}55`
+            : "0 0 18px rgba(168,85,247,0.35)"
+          : "none",
+      }}
+    >
+      {filled && champData ? (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+          <ChampPortrait champ={champData} size={36} />
+          <span style={styles.hexLabel}>
+            {champion.length > 8 ? champion.slice(0, 7) + "…" : champion}
+          </span>
+        </div>
+      ) : filled ? (
+        <span style={styles.hexLabel}>
+          {champion.length > 8 ? champion.slice(0, 7) + "…" : champion}
+        </span>
+      ) : null}
+    </button>
+  );
+}
+
+// =============================================================
+// Background atmosphere
+// =============================================================
+function BgEffects() {
+  return (
+    <>
+      <div style={styles.bgGrad} />
+      <div style={styles.bgStars} />
+      <div style={styles.bgNebula} />
+    </>
+  );
+}
+
+// =============================================================
+// Styles
+// =============================================================
+const fontDisplay = `'Orbitron', 'Bebas Neue', system-ui, sans-serif`;
+const fontBody = `'DM Sans', 'Helvetica Neue', sans-serif`;
+const fontMono = `'JetBrains Mono', 'IBM Plex Mono', monospace`;
+
+const styles = {
+  shell: {
+    position: "relative",
+    minHeight: "100vh",
+    fontFamily: fontBody,
+    color: "#e5e7eb",
+    background: "#06070d",
+    overflow: "hidden",
+  },
+  bgGrad: {
+    position: "fixed",
+    inset: 0,
+    background:
+      "radial-gradient(ellipse at 20% 0%, rgba(99,40,167,0.25), transparent 55%), radial-gradient(ellipse at 80% 100%, rgba(20,80,180,0.22), transparent 55%), linear-gradient(180deg, #07081a 0%, #06070d 60%)",
+    pointerEvents: "none",
+    zIndex: 0,
+  },
+  bgStars: {
+    position: "fixed",
+    inset: 0,
+    backgroundImage:
+      "radial-gradient(1px 1px at 12% 22%, rgba(255,255,255,0.7), transparent), radial-gradient(1px 1px at 36% 14%, rgba(255,255,255,0.4), transparent), radial-gradient(1px 1px at 58% 70%, rgba(255,255,255,0.55), transparent), radial-gradient(1px 1px at 78% 30%, rgba(255,255,255,0.5), transparent), radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.6), transparent), radial-gradient(1px 1px at 22% 88%, rgba(255,255,255,0.4), transparent), radial-gradient(1.5px 1.5px at 65% 12%, rgba(251,191,36,0.6), transparent), radial-gradient(1.5px 1.5px at 8% 65%, rgba(168,85,247,0.5), transparent)",
+    pointerEvents: "none",
+    zIndex: 0,
+  },
+  bgNebula: {
+    position: "fixed",
+    top: "-20%",
+    right: "-10%",
+    width: "60%",
+    height: "60%",
+    background: "radial-gradient(circle, rgba(251,191,36,0.08), transparent 60%)",
+    pointerEvents: "none",
+    zIndex: 0,
+    filter: "blur(40px)",
+  },
+  topbar: {
+    position: "relative",
+    zIndex: 2,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "16px 28px",
+    borderBottom: "1px solid rgba(168,85,247,0.18)",
+    background: "rgba(7,8,18,0.6)",
+    backdropFilter: "blur(8px)",
+  },
+  brand: { display: "flex", gap: 14, alignItems: "center" },
+  brandIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 8,
+    background: "linear-gradient(135deg, rgba(251,191,36,0.2), rgba(168,85,247,0.2))",
+    border: "1px solid rgba(251,191,36,0.4)",
+    display: "grid",
+    placeItems: "center",
+    boxShadow: "0 0 22px rgba(251,191,36,0.25)",
+  },
+  brandTitle: {
+    fontFamily: fontDisplay,
+    fontWeight: 800,
+    fontSize: 20,
+    letterSpacing: 4,
+    color: "#fbbf24",
+    lineHeight: 1,
+  },
+  brandSub: {
+    fontSize: 11,
+    color: "#94a3b8",
+    letterSpacing: 1.5,
+    marginTop: 4,
+    textTransform: "uppercase",
+  },
+  topBtnGhost: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    padding: "8px 12px",
+    background: "transparent",
+    color: "#cbd5e1",
+    border: "1px solid rgba(148,163,184,0.25)",
+    borderRadius: 6,
+    fontSize: 12,
+    fontFamily: fontBody,
+    cursor: "pointer",
+    letterSpacing: 0.5,
+  },
+  topBtnPrimary: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    padding: "8px 14px",
+    background: "linear-gradient(135deg, #fbbf24, #f59e0b)",
+    color: "#1a1300",
+    border: "none",
+    borderRadius: 6,
+    fontSize: 12,
+    fontWeight: 700,
+    fontFamily: fontBody,
+    cursor: "pointer",
+    letterSpacing: 0.5,
+    boxShadow: "0 0 18px rgba(251,191,36,0.35)",
+  },
+  body: {
+    position: "relative",
+    zIndex: 1,
+    display: "flex",
+    height: "calc(100vh - 73px)",
+  },
+  // sidebar
+  sidebar: {
+    width: 320,
+    flexShrink: 0,
+    borderRight: "1px solid rgba(168,85,247,0.12)",
+    background: "rgba(10,12,24,0.55)",
+    backdropFilter: "blur(8px)",
+    display: "flex",
+    flexDirection: "column",
+    padding: "16px 14px",
+  },
+  searchWrap: { position: "relative", marginBottom: 10 },
+  searchInput: {
+    width: "100%",
+    boxSizing: "border-box",
+    padding: "10px 12px 10px 32px",
+    background: "rgba(15,23,42,0.6)",
+    border: "1px solid rgba(71,85,105,0.4)",
+    borderRadius: 6,
+    color: "#e5e7eb",
+    fontFamily: fontBody,
+    fontSize: 13,
+    outline: "none",
+  },
+  tierRow: { display: "flex", gap: 4, marginBottom: 12 },
+  tierChip: {
+    flex: 1,
+    padding: "6px 0",
+    background: "rgba(15,23,42,0.5)",
+    color: "#94a3b8",
+    border: "1px solid rgba(71,85,105,0.3)",
+    borderRadius: 5,
+    fontSize: 11,
+    fontFamily: fontDisplay,
+    letterSpacing: 1,
+    cursor: "pointer",
+    fontWeight: 700,
+  },
+  tierChipActive: {
+    background: "linear-gradient(135deg, rgba(251,191,36,0.2), rgba(168,85,247,0.2))",
+    color: "#fbbf24",
+    borderColor: "rgba(251,191,36,0.5)",
+  },
+  compList: { flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 6 },
+  compCard: {
+    display: "flex",
+    gap: 10,
+    alignItems: "center",
+    padding: "10px 12px",
+    background: "rgba(20,24,42,0.5)",
+    border: "1px solid rgba(71,85,105,0.25)",
+    borderRadius: 8,
+    cursor: "pointer",
+    textAlign: "left",
+    color: "inherit",
+    fontFamily: fontBody,
+    transition: "all .15s ease",
+  },
+  compCardActive: {
+    background: "linear-gradient(135deg, rgba(168,85,247,0.18), rgba(59,130,246,0.12))",
+    borderColor: "rgba(192,132,252,0.55)",
+    boxShadow: "0 0 16px rgba(168,85,247,0.25)",
+  },
+  compCardName: {
+    fontWeight: 600,
+    fontSize: 13,
+    color: "#f1f5f9",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  compCardSub: {
+    fontSize: 11,
+    color: "#94a3b8",
+    marginTop: 2,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  emptyList: { color: "#64748b", fontSize: 12, padding: 16, textAlign: "center" },
+  sidebarFooter: {
+    padding: "10px 4px 0",
+    fontSize: 10,
+    color: "#475569",
+    textAlign: "center",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+  },
+  // main
+  main: {
+    flex: 1,
+    overflowY: "auto",
+    padding: "24px 32px",
+  },
+  compRoot: { maxWidth: 1100, margin: "0 auto" },
+  heroCard: {
+    padding: 22,
+    borderRadius: 14,
+    background: "linear-gradient(135deg, rgba(168,85,247,0.08), rgba(20,24,42,0.85))",
+    border: "1px solid rgba(168,85,247,0.25)",
+    boxShadow: "0 0 30px rgba(168,85,247,0.1)",
+    marginBottom: 24,
+  },
+  heroName: {
+    fontFamily: fontDisplay,
+    fontSize: 32,
+    fontWeight: 700,
+    letterSpacing: 1.5,
+    margin: 0,
+    color: "#fafafa",
+    lineHeight: 1.1,
+  },
+  heroNameInput: {
+    fontFamily: fontDisplay,
+    fontSize: 28,
+    fontWeight: 700,
+    letterSpacing: 1.5,
+    background: "rgba(15,23,42,0.6)",
+    border: "1px solid rgba(71,85,105,0.5)",
+    borderRadius: 6,
+    padding: "8px 12px",
+    color: "#fafafa",
+    width: "100%",
+    boxSizing: "border-box",
+    outline: "none",
+  },
+  heroPlaystyle: {
+    marginTop: 6,
+    fontSize: 13,
+    color: "#a78bfa",
+    letterSpacing: 0.5,
+    fontWeight: 500,
+  },
+  summary: {
+    margin: 0,
+    color: "#cbd5e1",
+    fontSize: 14,
+    lineHeight: 1.7,
+  },
+  // section
+  section: { marginBottom: 28 },
+  sectionHead: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 14,
+  },
+  sectionIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 6,
+    background: "rgba(168,85,247,0.15)",
+    border: "1px solid rgba(168,85,247,0.3)",
+    display: "grid",
+    placeItems: "center",
+    color: "#c084fc",
+  },
+  sectionTitle: {
+    fontFamily: fontDisplay,
+    fontSize: 14,
+    fontWeight: 700,
+    letterSpacing: 3,
+    margin: 0,
+    color: "#fbbf24",
+    textTransform: "uppercase",
+  },
+  sectionRule: {
+    flex: 1,
+    height: 1,
+    background:
+      "linear-gradient(90deg, rgba(168,85,247,0.4), transparent)",
+  },
+  // champ grid
+  champGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(195px, 1fr))",
+    gap: 12,
+  },
+  champCard: {
+    padding: 12,
+    borderRadius: 10,
+    border: "1px solid",
+    position: "relative",
+    minHeight: 120,
+  },
+  champTop: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 8,
+    gap: 8,
+  },
+  champCost: {
+    fontFamily: fontMono,
+    fontSize: 10,
+    padding: "2px 6px",
+    border: "1px solid",
+    borderRadius: 4,
+    fontWeight: 700,
+    letterSpacing: 0.5,
+  },
+  champName: {
+    fontFamily: fontDisplay,
+    fontWeight: 700,
+    fontSize: 14,
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
+  champRole: {
+    fontSize: 10,
+    color: "#fbbf24",
+    textTransform: "uppercase",
+    letterSpacing: 1.5,
+    marginBottom: 6,
+  },
+  champTraits: {
+    fontSize: 11,
+    color: "#cbd5e1",
+    marginBottom: 6,
+  },
+  itemPills: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 4,
+    marginTop: 6,
+  },
+  itemPill: {
+    background: "rgba(255,255,255,0.05)",
+    border: "1px solid rgba(255,255,255,0.1)",
+    borderRadius: 4,
+    padding: "2px 6px",
+    fontSize: 10,
+    color: "#cbd5e1",
+    fontFamily: fontMono,
+  },
+  addCard: {
+    minHeight: 120,
+    border: "1px dashed rgba(168,85,247,0.4)",
+    borderRadius: 10,
+    background: "transparent",
+    color: "#a78bfa",
+    cursor: "pointer",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    fontFamily: fontDisplay,
+  },
+  removeBtn: {
+    width: "100%",
+    padding: "5px 8px",
+    background: "transparent",
+    color: "#f43f5e",
+    border: "1px solid rgba(244,63,94,0.4)",
+    borderRadius: 4,
+    fontSize: 10,
+    fontFamily: fontBody,
+    cursor: "pointer",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    letterSpacing: 0.5,
+  },
+  // items grid
+  itemGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+    gap: 14,
+  },
+  itemCol: {
+    background: "rgba(20,24,42,0.5)",
+    border: "1px solid rgba(71,85,105,0.3)",
+    borderRadius: 10,
+    padding: 14,
+  },
+  itemColHead: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 10,
+    fontFamily: fontDisplay,
+    fontSize: 11,
+    letterSpacing: 2,
+    color: "#cbd5e1",
+    fontWeight: 700,
+    textTransform: "uppercase",
+  },
+  // table
+  tableWrap: {
+    background: "rgba(20,24,42,0.5)",
+    border: "1px solid rgba(71,85,105,0.3)",
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  tableHead: {
+    display: "flex",
+    gap: 12,
+    padding: "10px 14px",
+    background: "rgba(10,12,24,0.6)",
+    fontFamily: fontDisplay,
+    fontSize: 10,
+    letterSpacing: 2,
+    color: "#94a3b8",
+    fontWeight: 700,
+  },
+  tableRow: {
+    display: "flex",
+    gap: 12,
+    padding: "10px 14px",
+    borderTop: "1px solid rgba(71,85,105,0.2)",
+    fontSize: 13,
+    color: "#cbd5e1",
+    alignItems: "flex-start",
+  },
+  stagePill: {
+    fontFamily: fontMono,
+    background: "rgba(168,85,247,0.15)",
+    border: "1px solid rgba(168,85,247,0.4)",
+    color: "#c084fc",
+    padding: "2px 8px",
+    borderRadius: 4,
+    fontSize: 12,
+    fontWeight: 600,
+    display: "inline-block",
+  },
+  econCell: { color: "#fbbf24", fontFamily: fontMono, fontSize: 12 },
+  addRowBtn: {
+    width: "100%",
+    padding: "10px",
+    background: "transparent",
+    color: "#a78bfa",
+    border: "none",
+    borderTop: "1px dashed rgba(168,85,247,0.3)",
+    cursor: "pointer",
+    fontSize: 12,
+    fontFamily: fontBody,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    letterSpacing: 0.5,
+  },
+  iconBtn: {
+    width: 28,
+    height: 28,
+    background: "transparent",
+    color: "#f43f5e",
+    border: "1px solid rgba(244,63,94,0.4)",
+    borderRadius: 4,
+    cursor: "pointer",
+    display: "grid",
+    placeItems: "center",
+    flexShrink: 0,
+  },
+  // hex board
+  boardWrap: {
+    background: "rgba(10,12,24,0.5)",
+    border: "1px solid rgba(71,85,105,0.3)",
+    borderRadius: 10,
+    padding: "20px 16px",
+  },
+  boardLabel: {
+    textAlign: "center",
+    fontSize: 10,
+    letterSpacing: 3,
+    color: "#64748b",
+    fontFamily: fontDisplay,
+    fontWeight: 700,
+    margin: "4px 0",
+  },
+  hexBoard: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 4,
+    padding: "10px 0",
+  },
+  hexRow: { display: "flex", gap: 4 },
+  hex: {
+    width: 78,
+    height: 88,
+    clipPath:
+      "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
+    color: "#e5e7eb",
+    fontSize: 9,
+    fontFamily: fontDisplay,
+    letterSpacing: 0.3,
+    fontWeight: 600,
+    display: "grid",
+    placeItems: "center",
+    padding: 0,
+    transition: "all .15s ease",
+  },
+  hexLabel: {
+    padding: "0 4px",
+    textAlign: "center",
+    lineHeight: 1.1,
+    fontSize: 8.5,
+    letterSpacing: 0.2,
+  },
+  picker: {
+    marginTop: 14,
+    background: "rgba(20,24,42,0.7)",
+    border: "1px solid rgba(168,85,247,0.4)",
+    borderRadius: 8,
+    padding: 12,
+  },
+  pickerBtn: {
+    padding: "5px 10px 5px 5px",
+    background: "rgba(15,23,42,0.7)",
+    border: "1px solid",
+    borderRadius: 4,
+    cursor: "pointer",
+    fontSize: 11,
+    fontFamily: fontBody,
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+  },
+  notesLabel: {
+    fontFamily: fontDisplay,
+    fontSize: 10,
+    letterSpacing: 2,
+    color: "#94a3b8",
+    fontWeight: 700,
+    marginBottom: 6,
+  },
+  // generic prose box
+  proseBox: {
+    background: "rgba(20,24,42,0.5)",
+    border: "1px solid rgba(71,85,105,0.3)",
+    borderRadius: 8,
+    padding: "12px 14px",
+    color: "#cbd5e1",
+    fontSize: 13.5,
+    lineHeight: 1.7,
+    whiteSpace: "pre-wrap",
+  },
+  // inputs
+  input: {
+    background: "rgba(15,23,42,0.6)",
+    border: "1px solid rgba(71,85,105,0.45)",
+    borderRadius: 5,
+    padding: "8px 10px",
+    color: "#e5e7eb",
+    fontFamily: fontBody,
+    fontSize: 12.5,
+    outline: "none",
+    width: "100%",
+    boxSizing: "border-box",
+  },
+  inputSm: {
+    background: "rgba(15,23,42,0.6)",
+    border: "1px solid rgba(71,85,105,0.45)",
+    borderRadius: 4,
+    padding: "5px 8px",
+    color: "#e5e7eb",
+    fontFamily: fontMono,
+    fontSize: 12,
+    outline: "none",
+    width: "100%",
+    boxSizing: "border-box",
+  },
+  textarea: {
+    background: "rgba(15,23,42,0.6)",
+    border: "1px solid rgba(71,85,105,0.45)",
+    borderRadius: 6,
+    padding: "10px 12px",
+    color: "#e5e7eb",
+    fontFamily: fontBody,
+    fontSize: 13,
+    lineHeight: 1.6,
+    outline: "none",
+    width: "100%",
+    boxSizing: "border-box",
+    resize: "vertical",
+  },
+  textareaSm: {
+    background: "rgba(15,23,42,0.6)",
+    border: "1px solid rgba(71,85,105,0.45)",
+    borderRadius: 4,
+    padding: "6px 8px",
+    color: "#e5e7eb",
+    fontFamily: fontBody,
+    fontSize: 12,
+    lineHeight: 1.5,
+    outline: "none",
+    width: "100%",
+    boxSizing: "border-box",
+    resize: "vertical",
+  },
+  select: {
+    background: "rgba(15,23,42,0.6)",
+    border: "1px solid rgba(71,85,105,0.45)",
+    borderRadius: 5,
+    padding: "8px 10px",
+    color: "#e5e7eb",
+    fontFamily: fontBody,
+    fontSize: 12.5,
+    outline: "none",
+  },
+  // buttons
+  btnGhost: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    padding: "7px 12px",
+    background: "transparent",
+    color: "#cbd5e1",
+    border: "1px solid rgba(148,163,184,0.3)",
+    borderRadius: 5,
+    fontSize: 12,
+    fontFamily: fontBody,
+    cursor: "pointer",
+    letterSpacing: 0.5,
+  },
+  btnPrimary: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    padding: "7px 14px",
+    background: "linear-gradient(135deg, #fbbf24, #f59e0b)",
+    color: "#1a1300",
+    border: "none",
+    borderRadius: 5,
+    fontSize: 12,
+    fontWeight: 700,
+    fontFamily: fontBody,
+    cursor: "pointer",
+    letterSpacing: 0.5,
+    boxShadow: "0 0 16px rgba(251,191,36,0.3)",
+  },
+};
+
+// (Fonts loaded via <link> tag in HTML head)
+
+
+// Boot the app
+const _root = ReactDOM.createRoot(document.getElementById("root"));
+_root.render(<TFTCodex />);
+const _boot = document.getElementById("boot");
+if (_boot) _boot.remove();
+  </script>
+</body>
+</html>
